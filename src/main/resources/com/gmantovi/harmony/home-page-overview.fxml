@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="399.0" prefWidth="736.0" style="-fx-background-color: #242325;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gmantovi.harmony.MenuController">
+   <left>
+      <VBox prefHeight="510.0" prefWidth="187.0" style="-fx-background-color: #1C1B1C;" BorderPane.alignment="CENTER">
+         <children>
+            <Button alignment="BASELINE_LEFT" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="15.0" prefWidth="194.0" style="-fx-background-color: transparent;" textFill="WHITE">
+               <font>
+                  <Font size="5.0" />
+               </font>
+            </Button>
+            <Button fx:id="homeButton" alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" onAction="#switchToHome" prefHeight="60.0" prefWidth="194.0" stylesheets="@styles/StylesMenu.css" text="Home" textFill="WHITE">
+               <font>
+                  <Font size="18.0" />
+               </font>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <padding>
+                  <Insets left="20.0" />
+               </padding>
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@icons/whitehome.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="searchButton" alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="193.0" stylesheets="@styles/StylesMenu.css" text="Search" textFill="WHITE">
+               <font>
+                  <Font size="18.0" />
+               </font>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <padding>
+                  <Insets left="20.0" />
+               </padding>
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@icons/whitesearch.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="playListButton" alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="197.0" stylesheets="@styles/StylesMenu.css" text="My playlist" textFill="WHITE">
+               <font>
+                  <Font size="18.0" />
+               </font>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <padding>
+                  <Insets left="20.0" />
+               </padding>
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@icons/whiteplaylist.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </VBox>
+   </left>
+   <right>
+      <AnchorPane prefHeight="440.0" prefWidth="217.0" BorderPane.alignment="CENTER" />
+   </right>
+</BorderPane>
