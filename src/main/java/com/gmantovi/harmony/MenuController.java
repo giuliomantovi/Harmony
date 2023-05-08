@@ -17,25 +17,37 @@ public class MenuController {
     @FXML private Button homeButton;
     @FXML private Button playListButton;
     @FXML private Button searchButton;
-    @FXML private AnchorPane homeAnchorPane2;
+    @FXML private AnchorPane homeAnchorPane;
 
 
     @FXML
     public void initialize() throws IOException {
         //borderPane.setCenter(homeAnchorPane2);
         //borderPane.centerProperty().set(homeAnchorPane2);
-        
+        //switchToHome(new ActionEvent());
+
     }
 
     @FXML
     public void switchToHome(ActionEvent event) throws IOException {
-        System.out.println("EVENTO ATTIVATO");
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("home2.fxml")));
+        System.out.println("HOME");
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("home.fxml")));
+        borderPane.setCenter(root);
+
+    }
+
+    @FXML
+    public void switchToSearch(ActionEvent event) throws IOException {
+        System.out.println("SEARCH");
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("search.fxml")));
         borderPane.setCenter(root);
     }
 
-    public void switchToSearch(ActionEvent event){
-        borderPane.setCenter(homeAnchorPane2);
+    @FXML
+    public void switchToPlaylist(ActionEvent event) throws IOException {
+        System.out.println("PLAYLIST");
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("playlist.fxml")));
+        borderPane.setCenter(root);
     }
 
 }
