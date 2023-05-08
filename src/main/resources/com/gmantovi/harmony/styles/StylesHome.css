@@ -5,10 +5,10 @@
 }
 
 .button: hover{
-    -fx-background-color:  #242325;
+    -fx-background-color:  #1C1B1C;
     -fx-cursor: hand;
 }
 
 .button: focused{
-    -fx-background-color:  #242325;
+    -fx-background-color:  #1C1B1C;
 }
