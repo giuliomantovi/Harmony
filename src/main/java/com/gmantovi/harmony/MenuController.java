@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 
@@ -31,8 +32,10 @@ public class MenuController {
     @FXML
     public void switchToHome(ActionEvent event) throws IOException {
         System.out.println("HOME");
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("home.fxml")));
-        borderPane.setCenter(root);
+        Parent center = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("home.fxml")));
+        borderPane.setCenter(center);
+        Parent left = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("chartList.fxml")));
+        borderPane.setLeft(left);
 
     }
 
