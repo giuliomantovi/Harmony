@@ -34,8 +34,8 @@ public class MenuController {
         System.out.println("HOME");
         Parent center = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("home.fxml")));
         borderPane.setCenter(center);
-        Parent left = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("chartList.fxml")));
-        borderPane.setLeft(left);
+        Parent right = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("chartList.fxml")));
+        borderPane.setRight(right);
 
     }
 
