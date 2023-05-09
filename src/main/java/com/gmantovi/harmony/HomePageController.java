@@ -55,10 +55,8 @@ public class HomePageController {
          */
         try {
             MusixMatch m = new MusixMatch("391689594f1ad1d992b2efd5fc5862ef");
-            List<Track> l = m.getAlbumTracks(54605501,5);
-            System.out.println("LISTA CANZONI = " + l.get(0).getTrack().getTrackName() );
-
-
+            List<Track> l = m.getTracksChart("it",5,"top");
+            System.out.println("NOME CANZONE 1 = " + l.get(0).getTrack().getTrackName() + "\nNOME CANZONE 2 = " + l.get(1).getTrack().getTrackName());
         }catch (NullPointerException e){
             System.out.println("NULLO");
         }catch (Exception e){

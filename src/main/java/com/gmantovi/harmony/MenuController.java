@@ -27,13 +27,13 @@ public class MenuController {
     @FXML private Button searchButton;
     @FXML private AnchorPane homeAnchorPane;
 
-    @FXML private Button topArtists;
+    /*@FXML private Button topArtists;
     @FXML private Button topSongs;
     @FXML private ListView<String> listView;
     @FXML private Label listTitle;
     @FXML private ComboBox<String> countryBox;
 
-    private BorderPane bip;
+    private BorderPane bip;*/
 
 
     @FXML
@@ -76,11 +76,10 @@ public class MenuController {
         borderPane.setCenter(root);
     }
 
-    @FXML
+   /* @FXML
     public void showTopArtists(ActionEvent event) throws IOException {
-        BorderPane bp = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("home-page-overview.fxml")));
         Parent right = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("chartList.fxml")));
-        bp.setRight(right);
+        borderPane.setRight(right);
 
         //borderPane.getScene().getWindow().setWidth(borderPane.getScene().getWidth() + 0.001);
         //System.out.println(listTitle.getText());
@@ -88,7 +87,7 @@ public class MenuController {
         /*listTitle.setText("Top 5 artists in");
         countryBox.setItems(FXCollections.observableArrayList(
                 "IT","GB","FR","US","DE"));
-        countryBox.getSelectionModel().selectFirst();*/
+        countryBox.getSelectionModel().selectFirst();
 
     }
 
@@ -100,6 +99,6 @@ public class MenuController {
     @FXML
     public void onCountryUpdate() throws IOException {
 
-    }
+    }*/
 
 }

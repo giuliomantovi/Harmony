@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="399.0" prefWidth="736.0" style="-fx-background-color: #242325;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gmantovi.harmony.MenuController">
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="433.0" prefWidth="647.0" style="-fx-background-color: #242325;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gmantovi.harmony.MenuController">
    <left>
       <VBox prefHeight="510.0" prefWidth="187.0" style="-fx-background-color: #1C1B1C;" BorderPane.alignment="CENTER">
          <children>
@@ -75,9 +75,6 @@
          </children>
       </VBox>
    </left>
-   <right>
-      <AnchorPane prefHeight="440.0" prefWidth="217.0" BorderPane.alignment="CENTER" />
-   </right>
    <center>
       <AnchorPane fx:id="voidCenter" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
    </center>

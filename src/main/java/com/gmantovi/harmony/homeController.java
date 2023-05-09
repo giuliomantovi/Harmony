@@ -1,5 +1,7 @@
 package com.gmantovi.harmony;
 
+import com.gmantovi.harmony.gsonClasses.album.Album;
+import com.gmantovi.harmony.gsonClasses.track.Track;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -15,6 +17,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 public class homeController {
@@ -30,27 +33,33 @@ public class homeController {
     @FXML
     public void initialize() throws IOException {
 
-
-
     }
 
     @FXML
     public void showTopArtists(ActionEvent event) throws IOException {
-        //Parent right = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("chartList.fxml")));
-        //borderPane.setRight(right);
-        //borderPane.getScene().getWindow().setWidth(borderPane.getScene().getWidth() + 0.001);
-        //System.out.println(listTitle.getText());
-        //Parent label = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("chartList.fxml")));
-        /*listTitle.setText("Top 5 artists in");
+        listTitle.setText("Top 5 artists in");
         countryBox.setItems(FXCollections.observableArrayList(
                 "IT","GB","FR","US","DE"));
-        countryBox.getSelectionModel().selectFirst();*/
+        countryBox.getSelectionModel().selectFirst();
+        try {
+            MusixMatch m = new MusixMatch("391689594f1ad1d992b2efd5fc5862ef");
+            List<Track> l = m.getTracksChart("it",2,"top");
+
+        }catch (NullPointerException e){
+            System.out.println("NULLO");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
 
     }
 
     @FXML
     public void showTopSongs() throws IOException {
-
+        listTitle.setText("Top 5 songs in");
+        countryBox.setItems(FXCollections.observableArrayList(
+                "IT","GB","FR","US","DE"));
+        countryBox.getSelectionModel().selectFirst();
     }
 
     @FXML
