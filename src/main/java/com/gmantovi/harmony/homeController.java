@@ -2,6 +2,7 @@ package com.gmantovi.harmony;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -32,13 +33,13 @@ public class homeController {
     }
 
     @FXML
-    public void showTopArtists() throws IOException {
+    public void showTopArtists(ActionEvent event) throws IOException {
         //System.out.println(listTitle.getText());
         //Parent label = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("chartList.fxml")));
-        listTitle.setText("Top 5 artists in");
+        /*listTitle.setText("Top 5 artists in");
         countryBox.setItems(FXCollections.observableArrayList(
                 "IT","GB","FR","US","DE"));
-        countryBox.getSelectionModel().selectFirst();
+        countryBox.getSelectionModel().selectFirst();*/
 
     }
 

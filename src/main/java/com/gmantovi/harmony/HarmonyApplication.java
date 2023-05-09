@@ -11,12 +11,14 @@ import javafx.stage.Stage;
 import java.util.Objects;
 
 public class HarmonyApplication extends Application{
+    private Stage stage;
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage PrimaryStage) throws Exception {
+        stage = PrimaryStage;
         BorderPane b = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("home-page-overview.fxml")));
         AnchorPane a = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("home.fxml")));
         b.setCenter(a);
@@ -28,4 +30,6 @@ public class HarmonyApplication extends Application{
         stage.setScene(scene);
         stage.show();
     }
+
+
 }
