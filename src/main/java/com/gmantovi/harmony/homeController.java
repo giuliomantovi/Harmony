@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -25,6 +26,7 @@ public class homeController {
     @FXML private ComboBox<String> countryBox;
 
 
+
     @FXML
     public void initialize() throws IOException {
 
@@ -34,6 +36,9 @@ public class homeController {
 
     @FXML
     public void showTopArtists(ActionEvent event) throws IOException {
+        //Parent right = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("chartList.fxml")));
+        //borderPane.setRight(right);
+        //borderPane.getScene().getWindow().setWidth(borderPane.getScene().getWidth() + 0.001);
         //System.out.println(listTitle.getText());
         //Parent label = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("chartList.fxml")));
         /*listTitle.setText("Top 5 artists in");
