@@ -6,7 +6,7 @@
 
 .list-cell {
     -fx-text-fill: white;
-    -fx-text-size: 20px;
+    -fx-font-size: 15px;
 }
 
 .list-cell:even { /* <=== changed to even */

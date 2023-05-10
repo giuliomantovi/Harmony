@@ -34,18 +34,17 @@ public class homeController {
 
     @FXML
     public void initialize() throws IOException {
-
+        countryBox.setItems(FXCollections.observableArrayList(
+                "IT","GB","FR","US","DE"));
+        countryBox.getSelectionModel().selectFirst();
     }
 
     @FXML
     public void showTopArtists(ActionEvent event) throws IOException {
         listTitle.setText("Top 10 artists in");
-        countryBox.setItems(FXCollections.observableArrayList(
-                "IT","GB","FR","US","DE"));
-        countryBox.getSelectionModel().selectFirst();
         try {
             MusixMatch m = new MusixMatch("391689594f1ad1d992b2efd5fc5862ef");
-            List<Artist> l = m.getArtistsChart("it",10,"top");
+            List<Artist> l = m.getArtistsChart(countryBox.getSelectionModel().getSelectedItem(),10,"top");
             List<String> artists = l.stream()
                     .map(artist -> artist.getArtist().getArtistName())
                     .toList();
@@ -59,10 +58,19 @@ public class homeController {
 
     @FXML
     public void showTopSongs() throws IOException {
-        listTitle.setText("Top 5 songs in");
-        countryBox.setItems(FXCollections.observableArrayList(
-                "IT","GB","FR","US","DE"));
-        countryBox.getSelectionModel().selectFirst();
+        listTitle.setText("Top 10 songs in");
+        try {
+            MusixMatch m = new MusixMatch("391689594f1ad1d992b2efd5fc5862ef");
+            List<Track> l = m.getTracksChart(countryBox.getSelectionModel().getSelectedItem(),10,"top");
+            List<String> artists = l.stream()
+                    .map(artist -> artist.getTrack().getTrackName())
+                    .toList();
+            listView.setItems(FXCollections.observableArrayList(artists));
+        }catch (NullPointerException e){
+            System.out.println("NULLO");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @FXML
