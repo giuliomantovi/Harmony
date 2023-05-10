@@ -1,0 +1,17 @@
+#listView{
+    -fx-border-width: 2px;
+    -fx-border-color: #1C1B1C;
+}
+
+
+.list-cell {
+    -fx-text-fill: white;
+    -fx-text-size: 20px;
+}
+
+.list-cell:even { /* <=== changed to even */
+    -fx-background-color: #242325;
+}
+.list-cell:odd { /* <=== changed to even */
+    -fx-background-color: #1C1B1C;
+}
