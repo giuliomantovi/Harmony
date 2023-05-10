@@ -40,7 +40,7 @@ public class homeController {
     }
 
     @FXML
-    public void showTopArtists(ActionEvent event) throws IOException {
+    public void showTopArtists() throws IOException {
         listTitle.setText("Top 10 artists in");
         try {
             MusixMatch m = new MusixMatch("391689594f1ad1d992b2efd5fc5862ef");
@@ -75,7 +75,12 @@ public class homeController {
 
     @FXML
     public void onCountryUpdate() throws IOException {
-
+        if (listTitle.getText().equals("Top 10 artists in")) {
+            showTopArtists();
+        }
+        if(listTitle.getText().equals("Top 10 songs in")){
+            showTopSongs();
+        }
     }
 
 }
