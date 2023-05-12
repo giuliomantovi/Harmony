@@ -63,10 +63,10 @@ public class homeController {
         try {
             MusixMatch m = new MusixMatch("391689594f1ad1d992b2efd5fc5862ef");
             List<Track> l = m.getTracksChart(countryBox.getSelectionModel().getSelectedItem(),10,"top");
-            List<String> artists = l.stream()
-                    .map(artist -> artist.getTrack().getTrackName())
+            List<String> tracks = l.stream()
+                    .map(t -> t.getTrack().getTrackName() + " - " + t.getTrack().getArtistName())
                     .toList();
-            listView.setItems(FXCollections.observableArrayList(artists));
+            listView.setItems(FXCollections.observableArrayList(tracks));
         }catch (NullPointerException e){
             System.out.println("NULLO");
         }catch (Exception e){
