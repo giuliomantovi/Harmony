@@ -1,0 +1,28 @@
+.table-view{
+    -fx-background-color: #242325;
+}
+
+.table-cell {
+    -fx-text-fill: white;
+    -fx-background-color: #242325;
+}
+
+.table-cell: even{
+    -fx-background-color: #242325;
+
+}
+
+.table-cell: odd {
+    -fx-background-color: #1C1B1C;
+}
+
+.table-row-cell: hover{
+    -fx-background-color: gray;
+}
+
+.table-cell: hover{
+    -fx-cursor: hand;
+}
+
+
+

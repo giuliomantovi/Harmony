@@ -12,13 +12,14 @@
 
 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="336.0" prefWidth="476.0" style="-fx-background-color: #242325;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gmantovi.harmony.SearchController">
    <children>
-      <TableView fx:id="tableView" layoutY="87.0" prefHeight="239.0" prefWidth="219.0" style="-fx-background-color: #242325;" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="87.0">
+      <TableView fx:id="tableView" layoutY="87.0" prefHeight="239.0" prefWidth="219.0" stylesheets="@styles/tableView.css" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="87.0">
         <columns>
-          <TableColumn prefWidth="131.0" text="Name" />
-          <TableColumn prefWidth="87.0" text="Type" />
+            <TableColumn fx:id="idColumn" minWidth="0.0" prefWidth="0.0" text="ID" />
+          <TableColumn fx:id="nameColumn" prefWidth="124.0" text="Name" />
+          <TableColumn fx:id="typeColumn" prefWidth="103.0" text="Type" />
         </columns>
       </TableView>
-      <Label layoutX="29.0" layoutY="14.0" prefHeight="20.0" prefWidth="191.0" text="Search Tracks/Albums/Artists" textFill="WHITE" AnchorPane.leftAnchor="29.0" AnchorPane.topAnchor="20.0">
+      <Label layoutX="29.0" layoutY="14.0" prefHeight="20.0" prefWidth="191.0" text="Search Tracks/Artists" textFill="WHITE" AnchorPane.leftAnchor="29.0" AnchorPane.topAnchor="20.0">
          <font>
             <Font size="14.0" />
          </font></Label>
