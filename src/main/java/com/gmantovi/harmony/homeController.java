@@ -60,6 +60,7 @@ public class homeController {
     @FXML
     public void showTopSongs() throws IOException {
         listTitle.setText("Top 10 songs in");
+        listView.setStyle("-fx-border-width: 2px");
         try {
             MusixMatch m = new MusixMatch("391689594f1ad1d992b2efd5fc5862ef");
             List<Track> l = m.getTracksChart(countryBox.getSelectionModel().getSelectedItem(),10,"top");

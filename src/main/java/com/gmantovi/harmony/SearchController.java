@@ -12,13 +12,14 @@ import java.io.IOException;
 import java.util.List;
 
 public class SearchController {
-    @FXML private ListView<?> listView;
+    @FXML private ListView<String> listView;
     @FXML private TextField searchField;
     @FXML private TableView<Element> tableView;
     @FXML private Button searchButton;
     @FXML private TableColumn<Element, String> nameColumn;
     @FXML private TableColumn<Element, String> typeColumn;
     @FXML private TableColumn<Element, Integer> idColumn;
+    @FXML private ComboBox<String> infoBox;
 
     @FXML
     public void initialize() throws IOException {
@@ -26,6 +27,63 @@ public class SearchController {
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+        tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> showOptions(newValue));
+    }
+
+    public void showOptions(Element element){
+        if(element==null) {
+            System.out.println("Elemento nullo");
+            return;
+        }
+        if(element.getType().equals("track")){
+            infoBox.setItems(FXCollections.observableArrayList(
+                    "General track infos","Get lyrics","Get snippet","Get other songs of the album"));
+
+        }else{
+            infoBox.setItems(FXCollections.observableArrayList(
+                    "General artist infos","Get discography","Get related artists"));
+        }
+        infoBox.getSelectionModel().selectFirst();
+        //onInfoBoxUpdated();
+    }
+
+    @FXML
+    public void onInfoBoxChanged(){
+        if(infoBox.getSelectionModel().getSelectedItem()!=null) {
+            try {
+                MusixMatch m = new MusixMatch("391689594f1ad1d992b2efd5fc5862ef");
+                switch(infoBox.getSelectionModel().getSelectedItem()){
+                    case "General track infos":
+                        System.out.println("GET TRACK INFOS");
+                        Track track = m.getTrack(tableView.getSelectionModel().getSelectedItem().getId());
+                        ObservableList<String> infos = FXCollections.observableArrayList((List.of(
+                                "Nome: " + track.getTrack().getTrackName(),
+                                "Cantante: " + track.getTrack().getArtistName(),
+                                "Album: " + track.getTrack().getAlbumName(),
+                                "Genere primario: " + track.getTrack().getPrimaryGenres().getMusicGenreList().get(0).getMusicGenre().getMusicGenreName(),
+                                "Rating popolarità (1-100): " + track.getTrack().getTrackRating(),
+                                "Link alla canzone: " + track.getTrack().getTrackShareUrl()))
+                        );
+                        listView.setItems(infos);
+                        break;
+                    case "General artist infos":
+                        System.out.println("GET ARTIST INFOS");
+                        break;
+                    case "Get lyrics":
+                        break;
+                    case "Get snippet":
+                        break;
+                    case "Get other songs of the album":
+                        break;
+                    default:
+                }
+            }catch (NullPointerException e){
+                System.out.println("NULLO");
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
     }
 
     @FXML
@@ -52,7 +110,8 @@ public class SearchController {
                     }
                 }
             }
-            if(!elements.isEmpty()){
+            if((!elements.isEmpty())&&(!searchField.getText().equals(""))){
+                tableView.setStyle("-fx-border-color: white");
                 tableView.setItems(elements);
                 System.out.println(tableView.getItems().get(0).getId());
             }else{

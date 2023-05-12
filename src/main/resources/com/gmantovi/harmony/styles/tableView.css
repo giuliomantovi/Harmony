@@ -4,7 +4,7 @@
 
 .table-cell {
     -fx-text-fill: white;
-    -fx-background-color: #242325;
+    -fx-font-size: 18px;
 }
 
 .table-cell: even{
@@ -16,13 +16,16 @@
     -fx-background-color: #1C1B1C;
 }
 
-.table-row-cell: hover{
-    -fx-background-color: gray;
+.table-row-cell:hover .table-cell {
+    -fx-cursor: hand;
+    -fx-background-color: #2d3133;
 }
 
-.table-cell: hover{
-    -fx-cursor: hand;
+.table-row-cell:selected .table-cell {
+    -fx-background-color: #2d3133;
 }
+
+
 
 
 
