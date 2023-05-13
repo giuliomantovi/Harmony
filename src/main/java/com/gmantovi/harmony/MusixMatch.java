@@ -185,45 +185,54 @@ public class MusixMatch {
     }
 
     /**
-     * Search top tracks of a certain country using the given criteria.
+     * Search either for top artist of a country or related artists of a certain one, depending on the method field.
      *
      * @param country
-     *            2 letters representing a country
+     *            2 letters representing a country (only needed for the top artists method)
      * @param page_size
      *            specify number of items per result page
      * @param chart_name
+     *            (only needed for the top artists method),
      *            could be one of the following:
      *            top : editorial chart
      *            hot : Most viewed lyrics in the last 2 hours
      *            mxmweekly : Most viewed lyrics in the last 7 days
      *            mxmweekly_new : Most viewed lyrics in the last 7 days limited to new releases only
+     * @param method
+     *            could be get_artist_chart or get_related_artists, depending on the api response needed
+     * @param artist_ID
+     *            Musix match identifier for an artist (only needed for the related artist method)
      * @return a list of artists.
      */
-    public List<Artist> getArtistsChart(String country, int page_size, String chart_name) {
+    public List<Artist> getArtistsList(String country, int page_size, String chart_name, String method, int artist_ID) {
         List<Artist> artistList = null;
         ArtistSearchMessage message = null;
         Map<String, Object> params = new HashMap<String, Object>();
+        String methodParam = null;
 
         params.put(Constants.API_KEY, apiKey);
-        params.put(Constants.COUNTRY, country);
         params.put(Constants.PAGE_SIZE, page_size);
-        params.put(Constants.CHART_NAME, chart_name);
-
+        if(method.equals("get_artists_chart")){
+            params.put(Constants.CHART_NAME, chart_name);
+            params.put(Constants.COUNTRY, country);
+            methodParam = Methods.CHART_ARTISTS_GET;
+        }else{
+            params.put(Constants.ARTIST_ID, artist_ID);
+            methodParam = Methods.ARTIST_RELATED_GET;
+        }
         String response = null;
-
         response = MusixMatchRequest.sendRequest(MusixMatchRequest.getURLString(
-                Methods.CHART_ARTISTS_GET, params));
+                methodParam, params));
 
         Gson gson = new Gson();
-
         try {
             message = gson.fromJson(response, ArtistSearchMessage.class);
         } catch (JsonParseException jpe) {
             handleErrorResponse(response);
         }
 
+        assert message != null;
         int statusCode = message.getArtistMessage().getHeader().getStatusCode();
-
         if (statusCode > 200) {
             throw new NoSuchElementException("Status Code is not 200");
         }

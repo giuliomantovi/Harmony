@@ -4,8 +4,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class AlbumsGetMessage {
 
-
-
 	@SerializedName("message")
 	private AlbumsGetContainer albumsMessage;
 

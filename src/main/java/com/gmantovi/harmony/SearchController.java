@@ -1,9 +1,12 @@
 package com.gmantovi.harmony;
 
+import com.gmantovi.harmony.gsonClasses.album.Album;
 import com.gmantovi.harmony.gsonClasses.artist.Alias;
 import com.gmantovi.harmony.gsonClasses.artist.Artist;
 import com.gmantovi.harmony.gsonClasses.lyrics.Lyrics;
 import com.gmantovi.harmony.gsonClasses.snippet.Snippet;
+import com.gmantovi.harmony.gsonClasses.track.MusicGenre;
+import com.gmantovi.harmony.gsonClasses.track.MusicGenreList;
 import com.gmantovi.harmony.gsonClasses.track.Track;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -59,77 +62,105 @@ public class SearchController {
                 MusixMatch m = new MusixMatch("391689594f1ad1d992b2efd5fc5862ef");
                 ObservableList<String> infos = null;
                 Integer ID = tableView.getSelectionModel().getSelectedItem().getId();
-                switch(infoBox.getSelectionModel().getSelectedItem()){
-                    case "General track infos":
+                switch (infoBox.getSelectionModel().getSelectedItem()) {
+                    case "General track infos" -> {
                         System.out.println("GET TRACK INFOS");
                         Track track = m.getTrack(ID);
+                        String genres = "Primary genres: ";
+                        List<MusicGenreList> genreList = track.getTrack().getPrimaryGenres().getMusicGenreList();
+                        if(!genreList.isEmpty()){
+                            for(MusicGenreList mg : genreList){
+                                genres = genres.concat(mg.getMusicGenre().getMusicGenreName() + ", ");
+                            }
+                        }else{
+                            genres = genres.concat("undefined  ");
+                        }
+                        genres = genres.substring(0, genres.length() - 2);
+
                         infos = FXCollections.observableArrayList((List.of(
                                 "Name: " + track.getTrack().getTrackName(),
                                 "Singer: " + track.getTrack().getArtistName(),
                                 "Album: " + track.getTrack().getAlbumName(),
-                                "Primary genre: " + track.getTrack().getPrimaryGenres().getMusicGenreList().get(0).getMusicGenre().getMusicGenreName(),
+                                genres,
                                 "Popularity rating (1-100): " + track.getTrack().getTrackRating(),
                                 "Song link: " + track.getTrack().getTrackShareUrl()))
                         );
-                        break;
-
-                    case "General artist infos":
+                    }
+                    case "General artist infos" -> {
                         System.out.println("GET ARTIST INFOS");
                         Artist artist = m.getArtist(ID);
-
                         String alias = "Alias: ";
-                        if(!artist.getArtist().getAliasList().isEmpty()){
-                            for(Alias a: artist.getArtist().getAliasList()){
-                                alias = alias.concat(a.getAlias() +", ");
+                        if (!artist.getArtist().getAliasList().isEmpty()) {
+                            for (Alias a : artist.getArtist().getAliasList()) {
+                                alias = alias.concat(a.getAlias() + ", ");
                             }
-                            alias = alias.substring(0, alias.length() - 1);
-                        }else{
+                            alias = alias.substring(0, alias.length() - 2);
+                        } else {
                             alias = alias.concat("no alias");
                         }
-
                         String country = "Country: ";
-                        if(artist.getArtist().getArtistCountry().isEmpty()){
+                        if (artist.getArtist().getArtistCountry().isEmpty()) {
                             country = country.concat("undefined");
-                        }else{
+                        } else {
                             country = country.concat(artist.getArtist().getArtistCountry());
                         }
-
                         infos = FXCollections.observableArrayList((List.of(
                                 "Name: " + artist.getArtist().getArtistName(),
                                 alias,
                                 country,
                                 "Popularity rating (1-100): " + artist.getArtist().getArtistRating()))
                         );
-                        break;
-
-                    case "Get lyrics":
+                    }
+                    case "Get lyrics" -> {
                         Lyrics lyrics = m.getLyrics(ID);
                         infos = FXCollections.observableArrayList((List.of(
                                 "LYRICS:",
                                 lyrics.getLyricsBody())));
-                        break;
-
-                    case "Get snippet":
+                    }
+                    case "Get snippet" -> {
                         Snippet snippet = m.getSnippet(ID);
                         infos = FXCollections.observableArrayList((List.of(
                                 "Language: " + snippet.getSnippetLanguage(),
                                 "Snippet: \n" + snippet.getSnippetBody()))
                         );
-                        break;
-
-                    case "Get album songs":
-                        List<Track> tracks = m.getAlbumTracks(m.getTrack(ID).getTrack().getAlbumId(),50);
-                        String TracksList = "SONGS LIST: \n";
-                        for(Track t : tracks){
-                            TracksList = TracksList.concat(t.getTrack().getTrackName() + ", \n");
+                    }
+                    case "Get album songs" -> {
+                        List<Track> tracks = m.getAlbumTracks(m.getTrack(ID).getTrack().getAlbumId(), 50);
+                        String tracksList = "SONGS LIST: \n";
+                        for (Track t : tracks) {
+                            tracksList = tracksList.concat(t.getTrack().getTrackName() + ", \n");
                         }
+                        tracksList = tracksList.substring(0, tracksList.length() - 3);
                         infos = FXCollections.observableArrayList((List.of(
                                 "ALBUM NAME: " + tracks.get(0).getTrack().getAlbumName(),
-                                TracksList))
+                                tracksList))
                         );
-                        break;
+                    }
+                    case "Get discography" -> {
+                        List<Album> albums = m.getArtistAlbums(ID, 200);
+                        String albumsList = "ALBUMS LIST: \n";
+                        for (Album a : albums) {
+                            albumsList = albumsList.concat(a.getAlbum().getAlbumName() + ", \n");
+                        }
+                        albumsList = albumsList.substring(0, albumsList.length() - 3);
+                        infos = FXCollections.observableArrayList((List.of(
+                                albumsList))
+                        );
+                    }
 
-                    default:
+                    case "Get related artists" ->{
+                        List<Artist> artists = m.getArtistsList("",10,"","get_related_artist",ID);
+                        String relatedList = "RELATED ARTISTS: \n";
+                        for (Artist a : artists) {
+                            relatedList = relatedList.concat(a.getArtist().getArtistName() + ", \n");
+                        }
+                        relatedList = relatedList.substring(0, relatedList.length() - 3);
+                        infos = FXCollections.observableArrayList((List.of(
+                                relatedList))
+                        );
+                    }
+                    default -> {
+                    }
                 }
                 if(infos!=null) {
                     listView.setItems(infos);

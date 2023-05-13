@@ -21,6 +21,8 @@ module com.gmantovi.harmony{
     opens com.gmantovi.harmony.gsonClasses.artist.search;
     opens com.gmantovi.harmony.gsonClasses.artist.get;
     opens com.gmantovi.harmony.gsonClasses.artist.getAlbums;
+    opens com.gmantovi.harmony.gsonClasses.album.get;
+    opens com.gmantovi.harmony.gsonClasses.album;
     opens com.gmantovi.harmony to javafx.fxml;
     exports com.gmantovi.harmony;
 }

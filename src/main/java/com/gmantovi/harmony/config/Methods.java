@@ -30,6 +30,12 @@ public class Methods {
     public static final String ARTIST_GET = "artist.get";
 
     /**
+     * Get related artists for a certain artist.
+     */
+    public static final String ARTIST_RELATED_GET = "artist.related.get";
+
+
+    /**
      * Search for artists in our database.
      */
     public static final String ARTIST_SEARCH = "artist.search";
@@ -58,13 +64,6 @@ public class Methods {
     public static final String TRACK_GET = "track.get";
 
     /**
-     * This API method provides you the opportunity to help us improving our
-     * catalogue. (v1.1)
-     */
-    public static final String TRACK_LYRICS_FEEDBACK_POST =
-            "track.lyrics.feedback.post";
-
-    /**
      * Retrieve the lyrics of a track.
      */
     public static final String TRACK_LYRICS_GET = "track.lyrics.get";
@@ -74,18 +73,4 @@ public class Methods {
      */
     public static final String TRACK_SNIPPET_GET = "track.snippet.get";
 
-    /**
-     * Retrieve the subtitle of a track.
-     */
-    public static final String TRACK_SUBTITLE_GET = "track.subtitle.get";
-
-    /**
-     * Search for a track in our database.
-     */
-    public static final String TRACK_SEARCH = "track.search";
-
-    /**
-     * Retrieve the subtitle of a track.
-     */
-    public static final String TRACK_SUBTITLE = "track.subtitle.get";
 }

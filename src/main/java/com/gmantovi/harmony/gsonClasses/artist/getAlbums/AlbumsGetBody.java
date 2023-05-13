@@ -1,6 +1,7 @@
 package com.gmantovi.harmony.gsonClasses.artist.getAlbums;
 
 import com.gmantovi.harmony.gsonClasses.album.Album;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
@@ -9,6 +10,7 @@ import java.util.List;
  *
  */
 public class AlbumsGetBody {
+    //@SerializedName("album_list")
     private List<Album> album_list;
 
     public void setAlbums(List<Album> album_list) {

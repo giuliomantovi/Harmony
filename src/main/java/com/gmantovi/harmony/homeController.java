@@ -43,7 +43,7 @@ public class homeController {
         listView.setStyle("-fx-border-width: 1px");
         try {
             MusixMatch m = new MusixMatch("391689594f1ad1d992b2efd5fc5862ef");
-            List<Artist> l = m.getArtistsChart(countryBox.getSelectionModel().getSelectedItem(),10,"top");
+            List<Artist> l = m.getArtistsList(countryBox.getSelectionModel().getSelectedItem(),10,"top","get_artists_chart",-1);
             List<String> artists = l.stream()
                     .map(artist -> artist.getArtist().getArtistName())
                     .toList();
