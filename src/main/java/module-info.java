@@ -13,6 +13,8 @@ module com.gmantovi.harmony{
     opens com.gmantovi.harmony.gsonClasses.track.chart;
     opens com.gmantovi.harmony.gsonClasses.track.get;
     opens com.gmantovi.harmony.gsonClasses.track.search;
+    opens com.gmantovi.harmony.gsonClasses.lyrics;
+    opens com.gmantovi.harmony.gsonClasses.lyrics.get;
     opens com.gmantovi.harmony.gsonClasses.artist;
     opens com.gmantovi.harmony.gsonClasses.artist.search;
     opens com.gmantovi.harmony.gsonClasses.artist.get;

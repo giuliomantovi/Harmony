@@ -1,12 +1,14 @@
 package com.gmantovi.harmony;
 
 import com.gmantovi.harmony.gsonClasses.artist.Artist;
+import com.gmantovi.harmony.gsonClasses.lyrics.Lyrics;
 import com.gmantovi.harmony.gsonClasses.track.Track;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldListCell;
 
 import java.io.IOException;
 import java.util.List;
@@ -51,18 +53,19 @@ public class SearchController {
     public void onInfoBoxChanged(){
         if(infoBox.getSelectionModel().getSelectedItem()!=null) {
             try {
+                listView.setStyle("-fx-border-width: 1px");
                 MusixMatch m = new MusixMatch("391689594f1ad1d992b2efd5fc5862ef");
                 switch(infoBox.getSelectionModel().getSelectedItem()){
                     case "General track infos":
                         System.out.println("GET TRACK INFOS");
                         Track track = m.getTrack(tableView.getSelectionModel().getSelectedItem().getId());
                         ObservableList<String> infos = FXCollections.observableArrayList((List.of(
-                                "Nome: " + track.getTrack().getTrackName(),
-                                "Cantante: " + track.getTrack().getArtistName(),
+                                "Name: " + track.getTrack().getTrackName(),
+                                "Singer: " + track.getTrack().getArtistName(),
                                 "Album: " + track.getTrack().getAlbumName(),
-                                "Genere primario: " + track.getTrack().getPrimaryGenres().getMusicGenreList().get(0).getMusicGenre().getMusicGenreName(),
-                                "Rating popolarità (1-100): " + track.getTrack().getTrackRating(),
-                                "Link alla canzone: " + track.getTrack().getTrackShareUrl()))
+                                "Primary genre: " + track.getTrack().getPrimaryGenres().getMusicGenreList().get(0).getMusicGenre().getMusicGenreName(),
+                                "Popularity rating (1-100): " + track.getTrack().getTrackRating(),
+                                "Song link: " + track.getTrack().getTrackShareUrl()))
                         );
                         listView.setItems(infos);
                         break;
@@ -70,6 +73,11 @@ public class SearchController {
                         System.out.println("GET ARTIST INFOS");
                         break;
                     case "Get lyrics":
+                        Lyrics lyrics = m.getLyrics(tableView.getSelectionModel().getSelectedItem().getId());
+                        ObservableList<String> lyricsList = FXCollections.observableArrayList((List.of(
+                                "LYRICS:",
+                                lyrics.getLyricsBody())));
+                        listView.setItems(lyricsList);
                         break;
                     case "Get snippet":
                         break;
@@ -77,6 +85,8 @@ public class SearchController {
                         break;
                     default:
                 }
+                listView.setEditable(true);
+                listView.setCellFactory(TextFieldListCell.forListView());
             }catch (NullPointerException e){
                 System.out.println("NULLO");
             }catch (Exception e){

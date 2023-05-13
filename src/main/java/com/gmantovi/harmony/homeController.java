@@ -42,7 +42,7 @@ public class homeController {
     @FXML
     public void showTopArtists() throws IOException {
         listTitle.setText("Top 10 artists in");
-        listView.setStyle("-fx-border-width: 2px");
+        listView.setStyle("-fx-border-width: 1px");
         try {
             MusixMatch m = new MusixMatch("391689594f1ad1d992b2efd5fc5862ef");
             List<Artist> l = m.getArtistsChart(countryBox.getSelectionModel().getSelectedItem(),10,"top");
