@@ -30,8 +30,6 @@ public class homeController {
     @FXML private Label listTitle;
     @FXML private ComboBox<String> countryBox;
 
-
-
     @FXML
     public void initialize() throws IOException {
         countryBox.setItems(FXCollections.observableArrayList(

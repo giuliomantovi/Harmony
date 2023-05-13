@@ -1,7 +1,9 @@
 package com.gmantovi.harmony;
 
+import com.gmantovi.harmony.gsonClasses.artist.Alias;
 import com.gmantovi.harmony.gsonClasses.artist.Artist;
 import com.gmantovi.harmony.gsonClasses.lyrics.Lyrics;
+import com.gmantovi.harmony.gsonClasses.snippet.Snippet;
 import com.gmantovi.harmony.gsonClasses.track.Track;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -55,11 +57,12 @@ public class SearchController {
             try {
                 listView.setStyle("-fx-border-width: 1px");
                 MusixMatch m = new MusixMatch("391689594f1ad1d992b2efd5fc5862ef");
+                ObservableList<String> infos = null;
                 switch(infoBox.getSelectionModel().getSelectedItem()){
                     case "General track infos":
                         System.out.println("GET TRACK INFOS");
                         Track track = m.getTrack(tableView.getSelectionModel().getSelectedItem().getId());
-                        ObservableList<String> infos = FXCollections.observableArrayList((List.of(
+                        infos = FXCollections.observableArrayList((List.of(
                                 "Name: " + track.getTrack().getTrackName(),
                                 "Singer: " + track.getTrack().getArtistName(),
                                 "Album: " + track.getTrack().getAlbumName(),
@@ -67,11 +70,37 @@ public class SearchController {
                                 "Popularity rating (1-100): " + track.getTrack().getTrackRating(),
                                 "Song link: " + track.getTrack().getTrackShareUrl()))
                         );
-                        listView.setItems(infos);
                         break;
+
                     case "General artist infos":
                         System.out.println("GET ARTIST INFOS");
+                        Artist artist = m.getArtist(tableView.getSelectionModel().getSelectedItem().getId());
+
+                        String alias = "Alias: ";
+                        if(!artist.getArtist().getAliasList().isEmpty()){
+                            for(Alias a: artist.getArtist().getAliasList()){
+                                alias = alias.concat(a.getAlias() +", ");
+                            }
+                            alias = alias.substring(0, alias.length() - 1);
+                        }else{
+                            alias = alias.concat("no alias");
+                        }
+
+                        String country = "Country: ";
+                        if(artist.getArtist().getArtistCountry().isEmpty()){
+                            country = country.concat("undefined");
+                        }else{
+                            country = country.concat(artist.getArtist().getArtistCountry());
+                        }
+
+                        infos = FXCollections.observableArrayList((List.of(
+                                "Name: " + artist.getArtist().getArtistName(),
+                                alias,
+                                country,
+                                "Popularity rating (1-100): " + artist.getArtist().getArtistRating()))
+                        );
                         break;
+
                     case "Get lyrics":
                         Lyrics lyrics = m.getLyrics(tableView.getSelectionModel().getSelectedItem().getId());
                         ObservableList<String> lyricsList = FXCollections.observableArrayList((List.of(
@@ -79,14 +108,23 @@ public class SearchController {
                                 lyrics.getLyricsBody())));
                         listView.setItems(lyricsList);
                         break;
+
                     case "Get snippet":
+                        Snippet snippet = m.getSnippet(tableView.getSelectionModel().getSelectedItem().getId());
+                        infos = FXCollections.observableArrayList((List.of(
+                                "Language: " + snippet.getSnippetLanguage(),
+                                "Snippet: \n" + snippet.getSnippetBody()))
+                        );
                         break;
                     case "Get other songs of the album":
                         break;
                     default:
                 }
-                listView.setEditable(true);
-                listView.setCellFactory(TextFieldListCell.forListView());
+                if(infos!=null) {
+                    listView.setItems(infos);
+                    listView.setEditable(true);
+                    listView.setCellFactory(TextFieldListCell.forListView());
+                }
             }catch (NullPointerException e){
                 System.out.println("NULLO");
             }catch (Exception e){
