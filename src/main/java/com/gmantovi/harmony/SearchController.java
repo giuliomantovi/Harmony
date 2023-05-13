@@ -41,7 +41,7 @@ public class SearchController {
         }
         if(element.getType().equals("track")){
             infoBox.setItems(FXCollections.observableArrayList(
-                    "General track infos","Get lyrics","Get snippet","Get other songs of the album"));
+                    "General track infos","Get lyrics","Get snippet","Get album songs"));
 
         }else{
             infoBox.setItems(FXCollections.observableArrayList(
@@ -58,10 +58,11 @@ public class SearchController {
                 listView.setStyle("-fx-border-width: 1px");
                 MusixMatch m = new MusixMatch("391689594f1ad1d992b2efd5fc5862ef");
                 ObservableList<String> infos = null;
+                Integer ID = tableView.getSelectionModel().getSelectedItem().getId();
                 switch(infoBox.getSelectionModel().getSelectedItem()){
                     case "General track infos":
                         System.out.println("GET TRACK INFOS");
-                        Track track = m.getTrack(tableView.getSelectionModel().getSelectedItem().getId());
+                        Track track = m.getTrack(ID);
                         infos = FXCollections.observableArrayList((List.of(
                                 "Name: " + track.getTrack().getTrackName(),
                                 "Singer: " + track.getTrack().getArtistName(),
@@ -74,7 +75,7 @@ public class SearchController {
 
                     case "General artist infos":
                         System.out.println("GET ARTIST INFOS");
-                        Artist artist = m.getArtist(tableView.getSelectionModel().getSelectedItem().getId());
+                        Artist artist = m.getArtist(ID);
 
                         String alias = "Alias: ";
                         if(!artist.getArtist().getAliasList().isEmpty()){
@@ -102,22 +103,32 @@ public class SearchController {
                         break;
 
                     case "Get lyrics":
-                        Lyrics lyrics = m.getLyrics(tableView.getSelectionModel().getSelectedItem().getId());
-                        ObservableList<String> lyricsList = FXCollections.observableArrayList((List.of(
+                        Lyrics lyrics = m.getLyrics(ID);
+                        infos = FXCollections.observableArrayList((List.of(
                                 "LYRICS:",
                                 lyrics.getLyricsBody())));
-                        listView.setItems(lyricsList);
                         break;
 
                     case "Get snippet":
-                        Snippet snippet = m.getSnippet(tableView.getSelectionModel().getSelectedItem().getId());
+                        Snippet snippet = m.getSnippet(ID);
                         infos = FXCollections.observableArrayList((List.of(
                                 "Language: " + snippet.getSnippetLanguage(),
                                 "Snippet: \n" + snippet.getSnippetBody()))
                         );
                         break;
-                    case "Get other songs of the album":
+
+                    case "Get album songs":
+                        List<Track> tracks = m.getAlbumTracks(m.getTrack(ID).getTrack().getAlbumId(),50);
+                        String TracksList = "SONGS LIST: \n";
+                        for(Track t : tracks){
+                            TracksList = TracksList.concat(t.getTrack().getTrackName() + ", \n");
+                        }
+                        infos = FXCollections.observableArrayList((List.of(
+                                "ALBUM NAME: " + tracks.get(0).getTrack().getAlbumName(),
+                                TracksList))
+                        );
                         break;
+
                     default:
                 }
                 if(infos!=null) {
