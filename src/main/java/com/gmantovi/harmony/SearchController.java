@@ -44,7 +44,7 @@ public class SearchController {
         }
         if(element.getType().equals("track")){
             infoBox.setItems(FXCollections.observableArrayList(
-                    "General track infos","Get lyrics","Get snippet","Get album songs"));
+                    "General track infos","Get lyrics","Get snippet","Get album songs","Add to playlist"));
 
         }else{
             infoBox.setItems(FXCollections.observableArrayList(
