@@ -4,7 +4,7 @@ public class Element {
     private Integer id;
     private String name;
     private String type;
-    //private String authorName;
+    private String authorName;
     //private Integer authorID;
 
     public Element() { this(null,null,null); }
@@ -13,6 +13,13 @@ public class Element {
         this.id = id;
         this.name = name;
         this.type = type;
+    }
+
+    public Element(Integer id, String name, String type, String authorName) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.authorName = authorName;
     }
 
     public Integer getId() {
@@ -37,5 +44,13 @@ public class Element {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
     }
 }

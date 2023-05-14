@@ -12,7 +12,7 @@
 
 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="336.0" prefWidth="476.0" style="-fx-background-color: #242325;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gmantovi.harmony.SearchController">
    <children>
-      <TableView fx:id="tableView" layoutY="87.0" prefHeight="239.0" prefWidth="224.0" stylesheets="@styles/tableView.css" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="87.0">
+      <TableView fx:id="tableView" layoutY="87.0" prefHeight="239.0" prefWidth="224.0" stylesheets="@styles/searchTableView.css" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="87.0">
         <columns>
             <TableColumn fx:id="idColumn" minWidth="0.0" prefWidth="0.0" text="ID" visible="false" />
           <TableColumn fx:id="nameColumn" editable="false" prefWidth="142.0" text="Name" />
