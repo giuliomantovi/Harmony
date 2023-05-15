@@ -48,9 +48,9 @@ public class PlaylistController {
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=giulio");
             statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT * FROM client");
+            ResultSet rs = statement.executeQuery("SELECT * FROM playlist");
             while(rs.next()) {
-                int id = rs.getInt("idclient");
+                int id = rs.getInt("IDsong");
                 String name = rs.getString("name");
                 String surname= rs.getString("surname");
                 System.out.println("CLIENTE: " + id + " " + name + " " + surname);
