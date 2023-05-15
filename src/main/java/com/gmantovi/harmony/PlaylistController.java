@@ -29,8 +29,8 @@ public class PlaylistController {
     public void initialize() throws IOException, SQLException {
         //chiamata per popolare tv con db call
         playlistTableView.setItems(getPlaylistData());
-        playlistTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onPlaylistSelected(newValue));
-        suggestedTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onSuggestedSelected(newValue));
+        //playlistTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onPlaylistSelected(newValue));
+        //suggestedTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onSuggestedSelected(newValue));
     }
 
     private void onSuggestedSelected(Element newValue) {
@@ -42,6 +42,7 @@ public class PlaylistController {
     }
 
     ObservableList<Element> getPlaylistData() throws SQLException {
+        ObservableList<Element> playlist =FXCollections.observableArrayList();
         Connection connection = null;
         Statement statement = null;
         try{
@@ -51,9 +52,9 @@ public class PlaylistController {
             ResultSet rs = statement.executeQuery("SELECT * FROM playlist");
             while(rs.next()) {
                 int id = rs.getInt("IDsong");
-                String name = rs.getString("name");
-                String surname= rs.getString("surname");
-                System.out.println("CLIENTE: " + id + " " + name + " " + surname);
+                String song = rs.getString("song");
+                String singer= rs.getString("singer");
+                playlist.add(new Element(id,song,"track,",singer));
             }
         } catch(Exception e) {
             e.printStackTrace();
@@ -66,7 +67,7 @@ public class PlaylistController {
 
 
 
-        ObservableList<Element> playlist =null;/* /*FXCollections.observableArrayList();
+        /* /*FXCollections.observableArrayList();
         persons.add(new Person("Hans", "Muster"));
         persons.add(new Person("Ruth", "Mueller"));
         persons.add(new Person("Heinz", "Kurz"));

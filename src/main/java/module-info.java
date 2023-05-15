@@ -8,6 +8,7 @@ module com.gmantovi.harmony{
     requires com.google.gson;
     requires mysql.connector.j;
     //requires mysql.connector.j;
+    //requires mysql.connector.j;
     opens com.gmantovi.harmony.gsonClasses;
     opens com.gmantovi.harmony.gsonClasses.error;
     opens com.gmantovi.harmony.gsonClasses.track;
