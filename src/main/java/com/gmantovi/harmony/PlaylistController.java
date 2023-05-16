@@ -33,8 +33,12 @@ public class PlaylistController {
         playlistSingerColumn.setCellValueFactory(new PropertyValueFactory<>("authorName"));
         playlistSongColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         playlistTableView.setItems(getPlaylistData());
-        //playlistTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onPlaylistSelected(newValue));
-        //suggestedTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onSuggestedSelected(newValue));
+        suggestedSongColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        suggestedIDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        suggestedSingerColumn.setCellValueFactory(new PropertyValueFactory<>("authorName"));
+
+        playlistTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onPlaylistSelected(newValue));
+        suggestedTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onSuggestedSelected(newValue));
     }
 
     private void onSuggestedSelected(Element newValue) {
