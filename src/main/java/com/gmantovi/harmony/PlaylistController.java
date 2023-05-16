@@ -46,7 +46,7 @@ public class PlaylistController {
         Connection connection = null;
         Statement statement = null;
         try{
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=giulio");
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery("SELECT * FROM playlist");
@@ -60,6 +60,7 @@ public class PlaylistController {
             e.printStackTrace();
         } finally {
             if (connection != null) {
+                assert statement != null;
                 statement.close();
                 connection.close();
             }

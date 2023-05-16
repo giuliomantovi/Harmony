@@ -1,14 +1,17 @@
-module com.gmantovi.harmony{
+open module com.gmantovi.harmony{
+    requires java.desktop;
+    requires java.sql;
+    //requires mysql.connector.j;
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.graphics;
     requires org.controlsfx.controls;
-    requires static java.sql;
-    requires java.desktop;
     requires com.google.gson;
     requires mysql.connector.j;
 
-    opens com.gmantovi.harmony.gsonClasses;
+    //requires mysql.connector.j;
+
+    /*opens com.gmantovi.harmony.gsonClasses;
     opens com.gmantovi.harmony.gsonClasses.error;
     opens com.gmantovi.harmony.gsonClasses.track;
     opens com.gmantovi.harmony.gsonClasses.track.chart;
@@ -24,6 +27,6 @@ module com.gmantovi.harmony{
     opens com.gmantovi.harmony.gsonClasses.artist.getAlbums;
     opens com.gmantovi.harmony.gsonClasses.album.get;
     opens com.gmantovi.harmony.gsonClasses.album;
-    opens com.gmantovi.harmony to javafx.fxml;
-    exports com.gmantovi.harmony;
+    opens com.gmantovi.harmony to javafx.fxml;*/
+    //exports com.gmantovi.harmony;
 }
