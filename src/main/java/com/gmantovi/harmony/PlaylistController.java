@@ -7,6 +7,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.IOException;
 import java.sql.*;
@@ -15,19 +16,22 @@ import java.util.NoSuchElementException;
 public class PlaylistController {
 
     @FXML private Button addButton;
-    @FXML private TableColumn<?, ?> playlistIDColumn;
-    @FXML private TableColumn<?, ?> playlistSingerColumn;
-    @FXML private TableColumn<?, ?> playlistSongColumn;
+    @FXML private TableColumn<Element, String> playlistIDColumn;
+    @FXML private TableColumn<Element, String> playlistSingerColumn;
+    @FXML private TableColumn<Element, String> playlistSongColumn;
     @FXML private TableView<Element> playlistTableView;
     @FXML private Button removeButton;
-    @FXML private TableColumn<?, ?> suggestedIDColumn;
-    @FXML private TableColumn<?, ?> suggestedSingerColumn;
-    @FXML private TableColumn<?, ?> suggestedSongColumn;
+    @FXML private TableColumn<Element, String> suggestedIDColumn;
+    @FXML private TableColumn<Element, String> suggestedSingerColumn;
+    @FXML private TableColumn<Element, String> suggestedSongColumn;
     @FXML private TableView<Element> suggestedTableView;
 
     @FXML
     public void initialize() throws IOException, SQLException {
         //chiamata per popolare tv con db call
+        playlistIDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        playlistSingerColumn.setCellValueFactory(new PropertyValueFactory<>("authorName"));
+        playlistSongColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         playlistTableView.setItems(getPlaylistData());
         //playlistTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onPlaylistSelected(newValue));
         //suggestedTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onSuggestedSelected(newValue));
@@ -46,17 +50,18 @@ public class PlaylistController {
         Connection connection = null;
         Statement statement = null;
         try{
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=giulio");
+            //Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery("SELECT * FROM playlist");
             while(rs.next()) {
                 int id = rs.getInt("IDsong");
                 String song = rs.getString("song");
                 String singer= rs.getString("singer");
+                System.out.println("ID: "+id + "SONG: "+song+" singer"+singer);
                 playlist.add(new Element(id,song,"track,",singer));
             }
-        } catch(Exception e) {
+        } catch(SQLException e) {
             e.printStackTrace();
         } finally {
             if (connection != null) {
@@ -66,18 +71,6 @@ public class PlaylistController {
             }
         }
 
-
-
-        /* /*FXCollections.observableArrayList();
-        persons.add(new Person("Hans", "Muster"));
-        persons.add(new Person("Ruth", "Mueller"));
-        persons.add(new Person("Heinz", "Kurz"));
-        persons.add(new Person("Cornelia", "Meier"));
-        persons.add(new Person("Werner", "Meyer"));
-        persons.add(new Person("Lydia", "Kunz"));
-        persons.add(new Person("Anna", "Best"));
-        persons.add(new Person("Stefan", "Meier"));
-        persons.add(new Person("Martin", "Mueller"));*/
         return playlist;
     }
 

@@ -7,7 +7,7 @@ open module com.gmantovi.harmony{
     requires javafx.graphics;
     requires org.controlsfx.controls;
     requires com.google.gson;
-    requires mysql.connector.j;
+    //requires mysql.connector.j;
 
     //requires mysql.connector.j;
 
