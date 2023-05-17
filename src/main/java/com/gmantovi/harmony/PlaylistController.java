@@ -1,6 +1,8 @@
 package com.gmantovi.harmony;
 
 import com.gmantovi.harmony.config.Constants;
+import com.gmantovi.harmony.gsonClasses.track.MusicGenre;
+import com.gmantovi.harmony.gsonClasses.track.MusicGenreList;
 import com.gmantovi.harmony.gsonClasses.track.Track;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,6 +15,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.IOException;
 import java.sql.*;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public class PlaylistController {
@@ -57,7 +60,10 @@ public class PlaylistController {
             while(rs.next()) {
                 int id = rs.getInt("IDsong");
                 Track track = m.getTrack(id);
+                List<MusicGenreList> genre = track.getTrack().getPrimaryGenres().getMusicGenreList();
+                if(!genre.isEmpty()){
 
+                }
             }
         } catch(SQLException e) {
             e.printStackTrace();
