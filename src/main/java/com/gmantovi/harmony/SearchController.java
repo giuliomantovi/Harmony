@@ -16,6 +16,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldListCell;
 
 import java.io.IOException;
+import java.sql.*;
 import java.util.List;
 
 public class SearchController {
@@ -62,6 +63,8 @@ public class SearchController {
                 MusixMatch m = new MusixMatch("391689594f1ad1d992b2efd5fc5862ef");
                 ObservableList<String> infos = null;
                 Integer ID = tableView.getSelectionModel().getSelectedItem().getId();
+                String song = tableView.getSelectionModel().getSelectedItem().getName();
+                String singer = tableView.getSelectionModel().getSelectedItem().getAuthorName();
                 switch (infoBox.getSelectionModel().getSelectedItem()) {
                     case "General track infos" -> {
                         System.out.println("GET TRACK INFOS");
@@ -159,6 +162,43 @@ public class SearchController {
                                 relatedList))
                         );
                     }
+                    case "Add to playlist" ->{
+                        Connection connection = null;
+                        Statement statement = null;
+                        try{
+                            //Class.forName("com.mysql.cj.jdbc.Driver");
+                            connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
+                            statement = connection.createStatement();
+                            ResultSet rs = statement.executeQuery("SELECT IDsong FROM playlist");
+                            boolean present = false;
+                            while(rs.next()) {
+                                int id = rs.getInt("IDsong");
+                                if(id == ID){
+                                    present = true;
+                                }
+                            }
+                            if(!present){
+                                PreparedStatement insertPlaylist = connection.prepareStatement("INSERT INTO playlist (IDsong, song, singer) VALUES (?, ?, ?)");
+                                insertPlaylist.setInt(1, ID);
+                                insertPlaylist.setString(2,song);
+                                insertPlaylist.setString(3, singer);
+                                insertPlaylist.executeUpdate();
+                                showPlaylistInsertionAlert("Playlist updated","The song has been successfully added to the playlist");
+                            }else{
+                                showPlaylistInsertionAlert("Playlist NOT updated","This song is already in your playlist");
+                            }
+
+                        } catch(SQLException e) {
+                            e.printStackTrace();
+                        } finally {
+                            if (connection != null) {
+                                assert statement != null;
+                                statement.close();
+                                connection.close();
+                            }
+                        }
+
+                    }
                     default -> {
                     }
                 }
@@ -176,6 +216,17 @@ public class SearchController {
 
     }
 
+    /**
+     * Shows a simple warning dialog
+     */
+    void showPlaylistInsertionAlert(String header,String context) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Playlist insertion");
+        alert.setHeaderText(header);
+        alert.setContentText(context);
+        alert.showAndWait();
+    }
+
     @FXML
     public void onSearchButtonClicked() throws IOException {
         ObservableList<Element> elements = FXCollections.observableArrayList();
@@ -186,7 +237,7 @@ public class SearchController {
                 if((!params[0].isEmpty())&&(!params[1].isEmpty())){
                     Track l = m.getMatchingTrack(params[0],params[1]);
                     if(l!=null){
-                        elements.add(new Element(l.getTrack().getTrackId(),l.getTrack().getTrackName(),"track"));
+                        elements.add(new Element(l.getTrack().getTrackId(),l.getTrack().getTrackName(),"track",l.getTrack().getArtistName()));
                     }
                 }
             }else{
