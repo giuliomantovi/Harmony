@@ -1,6 +1,8 @@
 package com.gmantovi.harmony;
 
 import com.gmantovi.harmony.config.Constants;
+import com.gmantovi.harmony.gsonClasses.artist.Artist;
+import com.gmantovi.harmony.gsonClasses.lyrics.Lyrics;
 import com.gmantovi.harmony.gsonClasses.track.MusicGenre;
 import com.gmantovi.harmony.gsonClasses.track.MusicGenreList;
 import com.gmantovi.harmony.gsonClasses.track.Track;
@@ -12,13 +14,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import org.controlsfx.control.tableview2.filter.filtereditor.SouthFilter;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class PlaylistController {
 
@@ -60,23 +60,52 @@ public class PlaylistController {
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery("SELECT IDsong FROM playlist");
             HashMap<String,Integer> genresOccurrences = new HashMap<>();
+            HashMap<Integer,Integer> singersOccurrences = new HashMap<>();
+            HashMap<String,Integer> countriesOccurrences = new HashMap<>();
+            //consigliare una track dell'album più visto, una delle top 10 della nazionalità più vista dello stile più visto, uno del primo artista correlato a quello più visto,
+            //track più popolare dell'album più visto?
             while(rs.next()) {
                 int id = rs.getInt("IDsong");
                 Track track = m.getTrack(id);
                 List<MusicGenreList> genre = track.getTrack().getPrimaryGenres().getMusicGenreList();
+                //SI POTREBBE OTTIMIZZARE CON UNA FUNZIONE UNICA (?)
                 if(!genre.isEmpty()){
                     String genreName = genre.get(0).getMusicGenre().getMusicGenreName();
-                    if(!genresOccurrences.containsKey(genreName)){
-                        genresOccurrences.put(genreName,1);
-                    }else{
+                    if(genresOccurrences.containsKey(genreName)){
                         genresOccurrences.put(genreName, genresOccurrences.get(genreName) + 1);
+                    }else{
+                        genresOccurrences.put(genreName,1);
                     }
                 }
+                Integer singer = track.getTrack().getArtistId();
+                if(singer != null){
+                    if(singersOccurrences.containsKey(singer)){
+                        singersOccurrences.put(singer, singersOccurrences.get(singer) + 1);
+                    }else{
+                        singersOccurrences.put(singer,1);
+                    }
+                }
+                String country = m.getArtist(track.getTrack().getArtistId()).getArtist().getArtistCountry();
+                System.out.println("STATO: "+ country);
+                if(country != null && !country.equals("")){
+                    if(countriesOccurrences.containsKey(country)){
+                        countriesOccurrences.put(country, countriesOccurrences.get(country) + 1);
+                    }else{
+                        countriesOccurrences.put(country,1);
+                    }
+                }
+                //FARE THREAD PER QUESTO METODO?
             }
-            System.out.println("MAPPA GENERI: ");
-            for (Map.Entry<String, Integer> entry : genresOccurrences.entrySet()) {
-                System.out.println(entry.getKey() + ": " + entry.getValue());
-            }
+            Integer topArtist = null;
+            String topGenre = null;
+            String topCountry = null;
+            if(!singersOccurrences.isEmpty()) {topArtist = Collections.max(singersOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey();}
+            if(!genresOccurrences.isEmpty()) {topGenre = Collections.max(genresOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey();}
+            if(!countriesOccurrences.isEmpty()) {topCountry = Collections.max(countriesOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey();}
+            System.out.println("ARTISTA TOP: "+topArtist+" GENERE TOP: "+topGenre+ " LINGUA TOP: "+topCountry);
+
+
+            System.out.println(Collections.max(singersOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey());
         } catch(SQLException e) {
             e.printStackTrace();
         }catch(Exception e){e.printStackTrace();} finally {
