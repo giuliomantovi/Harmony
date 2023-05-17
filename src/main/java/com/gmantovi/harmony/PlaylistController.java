@@ -1,5 +1,7 @@
 package com.gmantovi.harmony;
 
+import com.gmantovi.harmony.config.Constants;
+import com.gmantovi.harmony.gsonClasses.track.Track;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -36,9 +38,39 @@ public class PlaylistController {
         suggestedSongColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         suggestedIDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         suggestedSingerColumn.setCellValueFactory(new PropertyValueFactory<>("authorName"));
+        suggestedTableView.setItems(getSuggestedData());
 
         playlistTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onPlaylistSelected(newValue));
         suggestedTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onSuggestedSelected(newValue));
+    }
+
+    private ObservableList<Element> getSuggestedData() throws SQLException {
+        ObservableList<Element> suggested =FXCollections.observableArrayList();
+        Connection connection = null;
+        Statement statement = null;
+        try{
+            //Class.forName("com.mysql.cj.jdbc.Driver");
+            MusixMatch m = new MusixMatch(Constants.PERSONAL_API_KEY);
+            connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
+            statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery("SELECT IDsong FROM playlist");
+            while(rs.next()) {
+                int id = rs.getInt("IDsong");
+                Track track = m.getTrack(id);
+
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                assert statement != null;
+                statement.close();
+                connection.close();
+            }
+        }
+
+
+        return suggested;
     }
 
     private void onSuggestedSelected(Element newValue) {
@@ -74,7 +106,8 @@ public class PlaylistController {
                 connection.close();
             }
         }
-
+        System.out.println("OGGETTI " + playlist.get(0).getName());
+        playlistTableView.setStyle("-fx-border-width: 1px");
         return playlist;
     }
 
@@ -147,6 +180,7 @@ public class PlaylistController {
                     insertPlaylist.executeUpdate();
                     new Alert(Alert.AlertType.CONFIRMATION, "The song has been successfully added to the playlist").showAndWait();
                     playlistTableView.getItems().add(suggestedTableView.getItems().get(selectedIndex));
+                    addButton.setDisable(true);
                 }else{
                     showNoSongSelectedAlert();
                 }

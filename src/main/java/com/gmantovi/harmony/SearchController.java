@@ -1,5 +1,6 @@
 package com.gmantovi.harmony;
 
+import com.gmantovi.harmony.config.Constants;
 import com.gmantovi.harmony.gsonClasses.album.Album;
 import com.gmantovi.harmony.gsonClasses.artist.Alias;
 import com.gmantovi.harmony.gsonClasses.artist.Artist;
@@ -60,7 +61,7 @@ public class SearchController {
         if(infoBox.getSelectionModel().getSelectedItem()!=null) {
             try {
                 listView.setStyle("-fx-border-width: 1px");
-                MusixMatch m = new MusixMatch("391689594f1ad1d992b2efd5fc5862ef");
+                MusixMatch m = new MusixMatch(Constants.PERSONAL_API_KEY);
                 ObservableList<String> infos = null;
                 Integer ID = tableView.getSelectionModel().getSelectedItem().getId();
                 String song = tableView.getSelectionModel().getSelectedItem().getName();

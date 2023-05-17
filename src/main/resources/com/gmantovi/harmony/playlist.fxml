@@ -9,11 +9,11 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="387.0" prefWidth="523.0" style="-fx-background-color: #242325;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gmantovi.harmony.PlaylistController">
    <children>
-      <TableView fx:id="playlistTableView" layoutX="41.0" layoutY="60.0" prefHeight="263.0" prefWidth="182.0">
+      <TableView fx:id="playlistTableView" layoutX="36.0" layoutY="60.0" prefHeight="263.0" prefWidth="195.0" style="-fx-background-color: #242325;" stylesheets="@styles/TableView.css">
         <columns>
             <TableColumn fx:id="playlistIDColumn" minWidth="0.0" prefWidth="0.0" text="ID" />
-          <TableColumn fx:id="playlistSongColumn" prefWidth="91.99994659423828" text="Song" />
-          <TableColumn fx:id="playlistSingerColumn" prefWidth="92.00006103515625" text="Singer" />
+          <TableColumn fx:id="playlistSongColumn" prefWidth="96.79999542236328" text="Song" />
+          <TableColumn fx:id="playlistSingerColumn" prefWidth="97.5999755859375" text="Singer" />
         </columns>
       </TableView>
       <Label alignment="CENTER" layoutX="77.0" layoutY="22.0" prefHeight="18.0" prefWidth="110.0" text="PLAYLIST" textFill="WHITE">
@@ -26,11 +26,11 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <TableView fx:id="suggestedTableView" layoutX="288.0" layoutY="62.0" prefHeight="263.0" prefWidth="182.0">
+      <TableView fx:id="suggestedTableView" layoutX="278.0" layoutY="62.0" prefHeight="263.0" prefWidth="204.0" style="-fx-background-color: #242325;" stylesheets="@styles/TableView.css">
          <columns>
             <TableColumn fx:id="suggestedIDColumn" minWidth="0.0" prefWidth="0.0" text="ID" />
-            <TableColumn fx:id="suggestedSongColumn" prefWidth="95.99993896484375" text="Song" />
-            <TableColumn fx:id="suggestedSingerColumn" prefWidth="85.60003662109375" text="Singer" />
+            <TableColumn fx:id="suggestedSongColumn" prefWidth="100.79998779296875" text="Song" />
+            <TableColumn fx:id="suggestedSingerColumn" prefWidth="102.4000244140625" text="Singer" />
          </columns>
       </TableView>
       <Button fx:id="removeButton" disable="true" layoutX="98.0" layoutY="332.0" mnemonicParsing="false" onAction="#handleRemoveSong" prefHeight="26.0" prefWidth="69.0" text="Remove" />

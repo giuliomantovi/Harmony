@@ -4,6 +4,10 @@ package com.gmantovi.harmony.config;
  */
 public final class Constants {
     /**
+     * A constant field to denote the value of my personal APIKEY.
+     */
+    public static final String PERSONAL_API_KEY = "391689594f1ad1d992b2efd5fc5862ef";
+    /**
      * A constant field to denote the value of API_KEY in the KV mapping.
      */
     public static final String API_KEY = "apikey";
