@@ -15,7 +15,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.IOException;
 import java.sql.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class PlaylistController {
@@ -57,17 +59,27 @@ public class PlaylistController {
             connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery("SELECT IDsong FROM playlist");
+            HashMap<String,Integer> genresOccurrences = new HashMap<>();
             while(rs.next()) {
                 int id = rs.getInt("IDsong");
                 Track track = m.getTrack(id);
                 List<MusicGenreList> genre = track.getTrack().getPrimaryGenres().getMusicGenreList();
                 if(!genre.isEmpty()){
-
+                    String genreName = genre.get(0).getMusicGenre().getMusicGenreName();
+                    if(!genresOccurrences.containsKey(genreName)){
+                        genresOccurrences.put(genreName,1);
+                    }else{
+                        genresOccurrences.put(genreName, genresOccurrences.get(genreName) + 1);
+                    }
                 }
+            }
+            System.out.println("MAPPA GENERI: ");
+            for (Map.Entry<String, Integer> entry : genresOccurrences.entrySet()) {
+                System.out.println(entry.getKey() + ": " + entry.getValue());
             }
         } catch(SQLException e) {
             e.printStackTrace();
-        } finally {
+        }catch(Exception e){e.printStackTrace();} finally {
             if (connection != null) {
                 assert statement != null;
                 statement.close();
@@ -112,8 +124,10 @@ public class PlaylistController {
                 connection.close();
             }
         }
-        System.out.println("OGGETTI " + playlist.get(0).getName());
-        playlistTableView.setStyle("-fx-border-width: 1px");
+        if(!playlist.isEmpty()){
+            System.out.println("OGGETTI " + playlist.get(0).getName());
+            playlistTableView.setStyle("-fx-border-width: 1px");
+        }
         return playlist;
     }
 
