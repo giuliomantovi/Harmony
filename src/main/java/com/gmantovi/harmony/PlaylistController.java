@@ -120,15 +120,45 @@ public class PlaylistController {
     }
 
     @FXML
-    private void handleAddSong() {
+    private void handleAddSong() throws SQLException {
+        Integer ID = suggestedTableView.getSelectionModel().getSelectedItem().getId();
+        String song = suggestedTableView.getSelectionModel().getSelectedItem().getName();
+        String singer = suggestedTableView.getSelectionModel().getSelectedItem().getAuthorName();
+        int selectedIndex = selectedIndex(suggestedTableView);
+        Connection connection = null;
+        Statement statement = null;
         try {
-
-            int selectedIndex = selectedIndex(suggestedTableView);
-            playlistTableView.getItems().add(suggestedTableView.getItems().get(selectedIndex));
-            //Rimozione dal database
-
-        } catch (NoSuchElementException e) {
+                //Class.forName("com.mysql.cj.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
+                statement = connection.createStatement();
+                ResultSet rs = statement.executeQuery("SELECT IDsong FROM playlist");
+                boolean present = false;
+                while(rs.next()) {
+                    int id = rs.getInt("IDsong");
+                    if(id == ID){
+                        present = true;
+                    }
+                }
+                if(!present){
+                    PreparedStatement insertPlaylist = connection.prepareStatement("INSERT INTO playlist (IDsong, song, singer) VALUES (?, ?, ?)");
+                    insertPlaylist.setInt(1, ID);
+                    insertPlaylist.setString(2,song);
+                    insertPlaylist.setString(3, singer);
+                    insertPlaylist.executeUpdate();
+                    new Alert(Alert.AlertType.CONFIRMATION, "The song has been successfully added to the playlist").showAndWait();
+                    playlistTableView.getItems().add(suggestedTableView.getItems().get(selectedIndex));
+                }else{
+                    showNoSongSelectedAlert();
+                }
+        } catch (NoSuchElementException | SQLException e) {
             showNoSongSelectedAlert();
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                assert statement != null;
+                statement.close();
+                connection.close();
+            }
         }
     }
 }
