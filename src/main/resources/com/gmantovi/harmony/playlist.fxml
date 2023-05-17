@@ -33,7 +33,7 @@
             <TableColumn fx:id="suggestedSingerColumn" prefWidth="85.60003662109375" text="Singer" />
          </columns>
       </TableView>
-      <Button fx:id="removeButton" disable="true" layoutX="98.0" layoutY="332.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="69.0" text="Remove" />
+      <Button fx:id="removeButton" disable="true" layoutX="98.0" layoutY="332.0" mnemonicParsing="false" onAction="#handleRemoveSong" prefHeight="26.0" prefWidth="69.0" text="Remove" />
       <Button fx:id="addButton" disable="true" layoutX="344.0" layoutY="332.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="69.0" text="Add" />
    </children>
 </AnchorPane>

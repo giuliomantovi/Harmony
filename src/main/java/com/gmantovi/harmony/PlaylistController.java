@@ -104,13 +104,17 @@ public class PlaylistController {
     @FXML
     private void handleRemoveSong() {
         try {
+            Connection connection = null;
             int selectedIndex = selectedIndex(playlistTableView);
+            connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
+            PreparedStatement deleteSong = connection.prepareStatement("DELETE FROM playlist WHERE IDsong=?");
+            deleteSong.setInt(1, playlistTableView.getItems().get(selectedIndex).getId());
+            deleteSong.executeUpdate();
             playlistTableView.getItems().remove(selectedIndex);
             //Rimozione dal database
-
-
-        } catch (NoSuchElementException e) {
+        } catch (NoSuchElementException | SQLException e) {
             showNoSongSelectedAlert();
+            e.printStackTrace();
         }
     }
 
