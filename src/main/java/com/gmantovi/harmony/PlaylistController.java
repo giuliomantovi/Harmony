@@ -111,6 +111,7 @@ public class PlaylistController {
             deleteSong.setInt(1, playlistTableView.getItems().get(selectedIndex).getId());
             deleteSong.executeUpdate();
             playlistTableView.getItems().remove(selectedIndex);
+            removeButton.setDisable(true);
             //Rimozione dal database
         } catch (NoSuchElementException | SQLException e) {
             showNoSongSelectedAlert();
