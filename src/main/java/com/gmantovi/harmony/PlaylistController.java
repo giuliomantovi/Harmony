@@ -98,11 +98,17 @@ public class PlaylistController {
             }
             Integer topArtist = null;
             String topGenre = null;
-            String topCountry = null;
+            String topCountry;
             if(!singersOccurrences.isEmpty()) {topArtist = Collections.max(singersOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey();}
             if(!genresOccurrences.isEmpty()) {topGenre = Collections.max(genresOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey();}
-            if(!countriesOccurrences.isEmpty()) {topCountry = Collections.max(countriesOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey();}
+            if(!countriesOccurrences.isEmpty()) {topCountry = Collections.max(countriesOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey();}else{topCountry=null;}
             System.out.println("ARTISTA TOP: "+topArtist+" GENERE TOP: "+topGenre+ " LINGUA TOP: "+topCountry);
+
+            List<Track> l = m.getTracksChart(topCountry,20,"top");
+            List<String> tracks = l.stream()
+                    .filter(t -> t.getTrack().getPrimaryGenres().getMusicGenreList().contains(topCountry))
+                    .map(t -> t.getTrack().getTrackName() + " - " + t.getTrack().getArtistName())
+                    .toList();
 
 
             System.out.println(Collections.max(singersOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey());
