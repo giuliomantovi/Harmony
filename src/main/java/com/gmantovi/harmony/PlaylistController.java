@@ -1,6 +1,7 @@
 package com.gmantovi.harmony;
 
 import com.gmantovi.harmony.config.Constants;
+import com.gmantovi.harmony.gsonClasses.album.Album;
 import com.gmantovi.harmony.gsonClasses.artist.Artist;
 import com.gmantovi.harmony.gsonClasses.lyrics.Lyrics;
 import com.gmantovi.harmony.gsonClasses.track.MusicGenre;
@@ -67,6 +68,7 @@ public class PlaylistController {
             while(rs.next()) {
                 int id = rs.getInt("IDsong");
                 Track track = m.getTrack(id);
+                //getting genres, singers and countries occurences in the playlist
                 List<MusicGenreList> genre = track.getTrack().getPrimaryGenres().getMusicGenreList();
                 //SI POTREBBE OTTIMIZZARE CON UNA FUNZIONE UNICA (?)
                 if(!genre.isEmpty()){
@@ -96,6 +98,7 @@ public class PlaylistController {
                 }
                 //FARE THREAD PER QUESTO METODO?
             }
+            //getting most frequent artist, genre and country in the user playlist
             Integer topArtist = null;
             String topGenre = null;
             String topCountry;
@@ -104,14 +107,66 @@ public class PlaylistController {
             if(!countriesOccurrences.isEmpty()) {topCountry = Collections.max(countriesOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey();}else{topCountry=null;}
             System.out.println("ARTISTA TOP: "+topArtist+" GENERE TOP: "+topGenre+ " LINGUA TOP: "+topCountry);
 
-            List<Track> l = m.getTracksChart(topCountry,20,"top");
-            List<String> tracks = l.stream()
-                    .filter(t -> t.getTrack().getPrimaryGenres().getMusicGenreList().contains(topCountry))
-                    .map(t -> t.getTrack().getTrackName() + " - " + t.getTrack().getArtistName())
-                    .toList();
+            //adding at most 3 suggested tracks selecting them from the top 50 songs from the most frequent country on the playlist
+            List<Track> topTracks = m.getTracksChart(topCountry,50,"top");
+            List<Track> suggestedTracks = new ArrayList<>();
+            System.out.println("TRACK TROVATE NELLA TOP 20:");
+            for(Track t: topTracks){
+                List<MusicGenreList> genresList = t.getTrack().getPrimaryGenres().getMusicGenreList();
+                if(!genresList.isEmpty()&&genresList.get(0).getMusicGenre().getMusicGenreName().equals(topGenre)){
+                    if(suggestedTracks.size()<3){
+                        suggestedTracks.add(t);
+                        System.out.println(t.getTrack().getTrackName());
+                    }else{
+                        break;
+                    }
+                }
+            }
+
+            if(topArtist != null) {
+                //adding one song of the most frequent artist in the playlist
+                List<Album> albumsList = m.getArtistAlbums(topArtist,20);
+                if(!albumsList.isEmpty()){
+                    int min = 0; // Minimum value of range
+                    int max = albumsList.size()-1; // Maximum value of range
+                    int random_int = (int)Math.floor(Math.random() * (max - min + 1) + min);
+                    Album randomAlbum = albumsList.get(random_int);
+                    List<Track> albumTracks = m.getAlbumTracks(randomAlbum.getAlbum().getAlbumId(),30);
+                    Track bestTrack = Collections.max(albumTracks, new Comparator<Track>() {
+                        @Override
+                        public int compare(Track o1, Track o2) {
+                            return 0;
+                        }
+                    });
+                }
+                //adding song from most popular albums of 2 artists related to the most frequent artist in the playlist
+                List<Artist> relatedArtists = m.getArtistsList("",2,"","get_related_artist",topArtist);
+                List<Album> relatedAlbums = new ArrayList<>();
+                for(Artist artist : relatedArtists){
+                    System.out.println("LISTA ALBUM CORRELATI PER " + artist.getArtist().getArtistName() + ": ");
+                    List<Album> artistAlbums = m.getArtistAlbums(artist.getArtist().getArtistId(),50);
+                    if(!artistAlbums.isEmpty()){
+                        int min = 0; // Minimum value of range
+                        int max = artistAlbums.size()-1; // Maximum value of range
+                        int random_int = (int)Math.floor(Math.random() * (max - min + 1) + min);
+                        relatedAlbums.add(artistAlbums.get(random_int));
+                    }
+                }
+                for(Album album : relatedAlbums){
+                    List<Track> albumTracks = m.getAlbumTracks(album.getAlbum().getAlbumId(),30);
+                    if(!albumTracks.isEmpty()){
+                        int min = 0; // Minimum value of range
+                        int max = albumTracks.size()-1; // Maximum value of range
+                        int random_int = (int)Math.floor(Math.random() * (max - min + 1) + min);
+                        suggestedTracks.add(albumTracks.get(random_int));
+                        System.out.println("Track scelta random: " + albumTracks.get(random_int).getTrack().getTrackName());
+                    }
+                }
+            }
 
 
-            System.out.println(Collections.max(singersOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey());
+
+
         } catch(SQLException e) {
             e.printStackTrace();
         }catch(Exception e){e.printStackTrace();} finally {

@@ -198,7 +198,7 @@ public class SearchController {
                                 connection.close();
                             }
                         }
-
+                        infoBox.getSelectionModel().selectFirst();
                     }
                     default -> {
                     }
@@ -232,7 +232,7 @@ public class SearchController {
     public void onSearchButtonClicked() throws IOException {
         ObservableList<Element> elements = FXCollections.observableArrayList();
         try {
-            MusixMatch m = new MusixMatch("391689594f1ad1d992b2efd5fc5862ef");
+            MusixMatch m = new MusixMatch(Constants.PERSONAL_API_KEY);
             if(searchField.getText().contains("-")){
                 String[] params = searchField.getText().split("-");
                 if((!params[0].isEmpty())&&(!params[1].isEmpty())){
