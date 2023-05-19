@@ -18,6 +18,9 @@
           <TableColumn fx:id="nameColumn" editable="false" prefWidth="142.0" text="Name" />
           <TableColumn fx:id="typeColumn" maxWidth="80.80001831054688" prefWidth="80.80001831054688" text="Type" />
         </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
       </TableView>
       <Label alignment="CENTER" layoutX="27.0" layoutY="17.0" prefHeight="27.0" prefWidth="423.0" text="Search Tracks/Artists" textFill="WHITE" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="25.80000000000001" AnchorPane.topAnchor="12.0">
          <font>

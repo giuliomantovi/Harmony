@@ -110,13 +110,13 @@ public class PlaylistController {
             //adding at most 3 suggested tracks selecting them from the top 50 songs from the most frequent country on the playlist
             List<Track> topTracks = m.getTracksChart(topCountry,50,"top");
             List<Track> suggestedTracks = new ArrayList<>();
-            System.out.println("TRACK TROVATE NELLA TOP 20:");
+            //System.out.println("TRACK TROVATE NELLA TOP 20:");
             for(Track t: topTracks){
                 List<MusicGenreList> genresList = t.getTrack().getPrimaryGenres().getMusicGenreList();
                 if(!genresList.isEmpty()&&genresList.get(0).getMusicGenre().getMusicGenreName().equals(topGenre)){
                     if(suggestedTracks.size()<3){
                         suggestedTracks.add(t);
-                        System.out.println(t.getTrack().getTrackName());
+                        //System.out.println(t.getTrack().getTrackName());
                     }else{
                         break;
                     }
@@ -131,19 +131,16 @@ public class PlaylistController {
                     int max = albumsList.size()-1; // Maximum value of range
                     int random_int = (int)Math.floor(Math.random() * (max - min + 1) + min);
                     Album randomAlbum = albumsList.get(random_int);
-                    List<Track> albumTracks = m.getAlbumTracks(randomAlbum.getAlbum().getAlbumId(),30);
-                    Track bestTrack = Collections.max(albumTracks, new Comparator<Track>() {
-                        @Override
-                        public int compare(Track o1, Track o2) {
-                            return 0;
-                        }
-                    });
+                    List<Track> albumTracks = m.getAlbumTracks(randomAlbum.getAlbum().getAlbumId(),50);
+                    Track bestTrack = Collections.max(albumTracks, Comparator.comparingInt(o -> o.getTrack().getTrackRating()));
+                    suggestedTracks.add(bestTrack);
+                    //System.out.println("BEST TRACK: " + bestTrack.getTrack().getTrackName() + " RATING: " + bestTrack.getTrack().getTrackRating());
                 }
                 //adding song from most popular albums of 2 artists related to the most frequent artist in the playlist
                 List<Artist> relatedArtists = m.getArtistsList("",2,"","get_related_artist",topArtist);
                 List<Album> relatedAlbums = new ArrayList<>();
                 for(Artist artist : relatedArtists){
-                    System.out.println("LISTA ALBUM CORRELATI PER " + artist.getArtist().getArtistName() + ": ");
+                    //System.out.println("LISTA ALBUM CORRELATI PER " + artist.getArtist().getArtistName() + ": ");
                     List<Album> artistAlbums = m.getArtistAlbums(artist.getArtist().getArtistId(),50);
                     if(!artistAlbums.isEmpty()){
                         int min = 0; // Minimum value of range
@@ -159,13 +156,15 @@ public class PlaylistController {
                         int max = albumTracks.size()-1; // Maximum value of range
                         int random_int = (int)Math.floor(Math.random() * (max - min + 1) + min);
                         suggestedTracks.add(albumTracks.get(random_int));
-                        System.out.println("Track scelta random: " + albumTracks.get(random_int).getTrack().getTrackName());
+                        //System.out.println("Track scelta random: " + albumTracks.get(random_int).getTrack().getTrackName());
                     }
                 }
             }
 
-
-
+            for(Track t : suggestedTracks){
+                suggested.add(new Element(t.getTrack().getTrackId(),t.getTrack().getTrackName(),"track",t.getTrack().getArtistName()));
+                //System.out.println("TRACK: " + t.getTrack().getTrackName() + "ARTISTA: " + t.getTrack().getArtistName());
+            }
 
         } catch(SQLException e) {
             e.printStackTrace();
@@ -254,7 +253,7 @@ public class PlaylistController {
             deleteSong.setInt(1, playlistTableView.getItems().get(selectedIndex).getId());
             deleteSong.executeUpdate();
             playlistTableView.getItems().remove(selectedIndex);
-            removeButton.setDisable(true);
+            //removeButton.setDisable(true);
             //Rimozione dal database
         } catch (NoSuchElementException | SQLException e) {
             showNoSongSelectedAlert();

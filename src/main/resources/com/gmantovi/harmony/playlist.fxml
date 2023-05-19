@@ -7,14 +7,17 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="387.0" prefWidth="523.0" style="-fx-background-color: #242325;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gmantovi.harmony.PlaylistController">
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="387.0" prefWidth="523.0" style="-fx-background-color: #242325;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gmantovi.harmony.PlaylistController">
    <children>
-      <TableView fx:id="playlistTableView" layoutX="36.0" layoutY="60.0" prefHeight="263.0" prefWidth="195.0" style="-fx-background-color: #242325;" stylesheets="@styles/TableView.css">
+      <TableView fx:id="playlistTableView" layoutX="26.0" layoutY="60.0" prefHeight="263.0" prefWidth="226.0" style="-fx-background-color: #242325;" stylesheets="@styles/TableView.css" AnchorPane.bottomAnchor="63.80000000000001" AnchorPane.leftAnchor="26.0" AnchorPane.topAnchor="60.0">
         <columns>
-            <TableColumn fx:id="playlistIDColumn" minWidth="0.0" prefWidth="0.0" text="ID" />
-          <TableColumn fx:id="playlistSongColumn" prefWidth="96.79999542236328" text="Song" />
-          <TableColumn fx:id="playlistSingerColumn" prefWidth="97.5999755859375" text="Singer" />
+            <TableColumn fx:id="playlistIDColumn" minWidth="0.0" prefWidth="0.0" text="ID" visible="false" />
+          <TableColumn fx:id="playlistSongColumn" editable="false" prefWidth="111.99994468688965" text="Song" />
+          <TableColumn fx:id="playlistSingerColumn" editable="false" prefWidth="113.5999816894531" text="Singer" />
         </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
       </TableView>
       <Label alignment="CENTER" layoutX="77.0" layoutY="22.0" prefHeight="18.0" prefWidth="110.0" text="PLAYLIST" textFill="WHITE">
          <font>
@@ -26,14 +29,17 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <TableView fx:id="suggestedTableView" layoutX="278.0" layoutY="62.0" prefHeight="263.0" prefWidth="204.0" style="-fx-background-color: #242325;" stylesheets="@styles/TableView.css">
+      <TableView fx:id="suggestedTableView" layoutX="271.0" layoutY="62.0" style="-fx-background-color: #242325;" stylesheets="@styles/TableView.css" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="270.6" AnchorPane.rightAnchor="26.0" AnchorPane.topAnchor="60.0">
          <columns>
-            <TableColumn fx:id="suggestedIDColumn" minWidth="0.0" prefWidth="0.0" text="ID" />
-            <TableColumn fx:id="suggestedSongColumn" prefWidth="100.79998779296875" text="Song" />
-            <TableColumn fx:id="suggestedSingerColumn" prefWidth="102.4000244140625" text="Singer" />
+            <TableColumn fx:id="suggestedIDColumn" minWidth="0.0" prefWidth="0.0" text="ID" visible="false" />
+            <TableColumn fx:id="suggestedSongColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="116.79998934268951" text="Song" />
+            <TableColumn fx:id="suggestedSingerColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="108.80001678466795" text="Singer" />
          </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
       </TableView>
-      <Button fx:id="removeButton" disable="true" layoutX="98.0" layoutY="332.0" mnemonicParsing="false" onAction="#handleRemoveSong" prefHeight="26.0" prefWidth="69.0" text="Remove" />
-      <Button fx:id="addButton" disable="true" layoutX="344.0" layoutY="332.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="69.0" text="Add" />
+      <Button fx:id="removeButton" disable="true" layoutX="104.0" layoutY="332.0" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#handleRemoveSong" prefHeight="26.0" prefWidth="69.0" text="Remove" AnchorPane.bottomAnchor="28.6" AnchorPane.leftAnchor="104.0" />
+      <Button fx:id="addButton" disable="true" layoutX="349.0" layoutY="332.0" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" prefHeight="26.0" prefWidth="69.0" text="Add" AnchorPane.bottomAnchor="28.600000000000023" AnchorPane.leftAnchor="349.0" />
    </children>
 </AnchorPane>
