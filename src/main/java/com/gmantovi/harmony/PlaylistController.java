@@ -20,6 +20,9 @@ import org.controlsfx.control.tableview2.filter.filtereditor.SouthFilter;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class PlaylistController {
 
@@ -51,6 +54,9 @@ public class PlaylistController {
     }
 
     private ObservableList<Element> getSuggestedData() throws SQLException {
+
+        //ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
         ObservableList<Element> suggested =FXCollections.observableArrayList();
         Connection connection = null;
         Statement statement = null;
@@ -69,35 +75,42 @@ public class PlaylistController {
                 int id = rs.getInt("IDsong");
                 Track track = m.getTrack(id);
                 //getting genres, singers and countries occurences in the playlist
-                List<MusicGenreList> genre = track.getTrack().getPrimaryGenres().getMusicGenreList();
-                //SI POTREBBE OTTIMIZZARE CON UNA FUNZIONE UNICA (?)
-                if(!genre.isEmpty()){
-                    String genreName = genre.get(0).getMusicGenre().getMusicGenreName();
-                    if(genresOccurrences.containsKey(genreName)){
-                        genresOccurrences.put(genreName, genresOccurrences.get(genreName) + 1);
-                    }else{
-                        genresOccurrences.put(genreName,1);
+                //executor.submit(() -> {
+                    List<MusicGenreList> genre = track.getTrack().getPrimaryGenres().getMusicGenreList();
+                    //SI POTREBBE OTTIMIZZARE CON UNA FUNZIONE UNICA (?)
+                    if(!genre.isEmpty()){
+                        String genreName = genre.get(0).getMusicGenre().getMusicGenreName();
+                        if(genresOccurrences.containsKey(genreName)){
+                            genresOccurrences.put(genreName, genresOccurrences.get(genreName) + 1);
+                        }else{
+                            genresOccurrences.put(genreName,1);
+                        }
                     }
-                }
-                Integer singer = track.getTrack().getArtistId();
-                if(singer != null){
-                    if(singersOccurrences.containsKey(singer)){
-                        singersOccurrences.put(singer, singersOccurrences.get(singer) + 1);
-                    }else{
-                        singersOccurrences.put(singer,1);
+                    Integer singer = track.getTrack().getArtistId();
+                    if(singer != null){
+                        if(singersOccurrences.containsKey(singer)){
+                            singersOccurrences.put(singer, singersOccurrences.get(singer) + 1);
+                        }else{
+                            singersOccurrences.put(singer,1);
+                        }
                     }
-                }
-                String country = m.getArtist(track.getTrack().getArtistId()).getArtist().getArtistCountry();
-                System.out.println("STATO: "+ country);
-                if(country != null && !country.equals("")){
-                    if(countriesOccurrences.containsKey(country)){
-                        countriesOccurrences.put(country, countriesOccurrences.get(country) + 1);
-                    }else{
-                        countriesOccurrences.put(country,1);
+                //});
+
+                //executor.submit(() -> {
+                    String country = m.getArtist(track.getTrack().getArtistId()).getArtist().getArtistCountry();
+                    //System.out.println("STATO: "+ country);
+                    if(country != null && !country.equals("")){
+                        if(countriesOccurrences.containsKey(country)){
+                            countriesOccurrences.put(country, countriesOccurrences.get(country) + 1);
+                        }else{
+                            countriesOccurrences.put(country,1);
+                        }
                     }
-                }
+                //});
+
                 //FARE THREAD PER QUESTO METODO?
             }
+            //boolean terminated = executor.awaitTermination(6000, TimeUnit.MILLISECONDS);
             //getting most frequent artist, genre and country in the user playlist
             Integer topArtist = null;
             String topGenre = null;
