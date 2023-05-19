@@ -3,8 +3,6 @@ package com.gmantovi.harmony;
 import com.gmantovi.harmony.config.Constants;
 import com.gmantovi.harmony.gsonClasses.album.Album;
 import com.gmantovi.harmony.gsonClasses.artist.Artist;
-import com.gmantovi.harmony.gsonClasses.lyrics.Lyrics;
-import com.gmantovi.harmony.gsonClasses.track.MusicGenre;
 import com.gmantovi.harmony.gsonClasses.track.MusicGenreList;
 import com.gmantovi.harmony.gsonClasses.track.Track;
 import javafx.collections.FXCollections;
@@ -15,14 +13,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import org.controlsfx.control.tableview2.filter.filtereditor.SouthFilter;
 
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class PlaylistController {
 
@@ -39,7 +33,6 @@ public class PlaylistController {
 
     @FXML
     public void initialize() throws IOException, SQLException {
-        //chiamata per popolare tv con db call
         playlistIDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         playlistSingerColumn.setCellValueFactory(new PropertyValueFactory<>("authorName"));
         playlistSongColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -48,20 +41,25 @@ public class PlaylistController {
         suggestedIDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         suggestedSingerColumn.setCellValueFactory(new PropertyValueFactory<>("authorName"));
         suggestedTableView.setItems(getSuggestedData());
+        playlistTableView.getSelectionModel().selectedItemProperty().addListener((observable) -> onPlaylistSelected());
+        suggestedTableView.getSelectionModel().selectedItemProperty().addListener((observable) -> onSuggestedSelected());
+    }
 
-        playlistTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onPlaylistSelected(newValue));
-        suggestedTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onSuggestedSelected(newValue));
+    private void onSuggestedSelected() {
+        addButton.setDisable(false);
+    }
+
+    private void onPlaylistSelected() {
+        removeButton.setDisable(false);
     }
 
     private ObservableList<Element> getSuggestedData() throws SQLException {
 
         //ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-
         ObservableList<Element> suggested =FXCollections.observableArrayList();
         Connection connection = null;
         Statement statement = null;
         try{
-            //Class.forName("com.mysql.cj.jdbc.Driver");
             MusixMatch m = new MusixMatch(Constants.PERSONAL_API_KEY);
             connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
             statement = connection.createStatement();
@@ -111,6 +109,7 @@ public class PlaylistController {
                 //FARE THREAD PER QUESTO METODO?
             }
             //boolean terminated = executor.awaitTermination(6000, TimeUnit.MILLISECONDS);
+
             //getting most frequent artist, genre and country in the user playlist
             Integer topArtist = null;
             String topGenre = null;
@@ -123,13 +122,11 @@ public class PlaylistController {
             //adding at most 3 suggested tracks selecting them from the top 50 songs from the most frequent country on the playlist
             List<Track> topTracks = m.getTracksChart(topCountry,50,"top");
             List<Track> suggestedTracks = new ArrayList<>();
-            //System.out.println("TRACK TROVATE NELLA TOP 20:");
             for(Track t: topTracks){
                 List<MusicGenreList> genresList = t.getTrack().getPrimaryGenres().getMusicGenreList();
                 if(!genresList.isEmpty()&&genresList.get(0).getMusicGenre().getMusicGenreName().equals(topGenre)){
                     if(suggestedTracks.size()<3){
                         suggestedTracks.add(t);
-                        //System.out.println(t.getTrack().getTrackName());
                     }else{
                         break;
                     }
@@ -140,24 +137,22 @@ public class PlaylistController {
                 //adding one song of the most frequent artist in the playlist
                 List<Album> albumsList = m.getArtistAlbums(topArtist,20);
                 if(!albumsList.isEmpty()){
-                    int min = 0; // Minimum value of range
-                    int max = albumsList.size()-1; // Maximum value of range
+                    int min = 0;
+                    int max = albumsList.size()-1;
                     int random_int = (int)Math.floor(Math.random() * (max - min + 1) + min);
                     Album randomAlbum = albumsList.get(random_int);
                     List<Track> albumTracks = m.getAlbumTracks(randomAlbum.getAlbum().getAlbumId(),50);
                     Track bestTrack = Collections.max(albumTracks, Comparator.comparingInt(o -> o.getTrack().getTrackRating()));
                     suggestedTracks.add(bestTrack);
-                    //System.out.println("BEST TRACK: " + bestTrack.getTrack().getTrackName() + " RATING: " + bestTrack.getTrack().getTrackRating());
                 }
                 //adding song from most popular albums of 2 artists related to the most frequent artist in the playlist
                 List<Artist> relatedArtists = m.getArtistsList("",2,"","get_related_artist",topArtist);
                 List<Album> relatedAlbums = new ArrayList<>();
                 for(Artist artist : relatedArtists){
-                    //System.out.println("LISTA ALBUM CORRELATI PER " + artist.getArtist().getArtistName() + ": ");
                     List<Album> artistAlbums = m.getArtistAlbums(artist.getArtist().getArtistId(),50);
                     if(!artistAlbums.isEmpty()){
-                        int min = 0; // Minimum value of range
-                        int max = artistAlbums.size()-1; // Maximum value of range
+                        int min = 0;
+                        int max = artistAlbums.size()-1;
                         int random_int = (int)Math.floor(Math.random() * (max - min + 1) + min);
                         relatedAlbums.add(artistAlbums.get(random_int));
                     }
@@ -165,48 +160,33 @@ public class PlaylistController {
                 for(Album album : relatedAlbums){
                     List<Track> albumTracks = m.getAlbumTracks(album.getAlbum().getAlbumId(),30);
                     if(!albumTracks.isEmpty()){
-                        int min = 0; // Minimum value of range
-                        int max = albumTracks.size()-1; // Maximum value of range
+                        int min = 0;
+                        int max = albumTracks.size()-1;
                         int random_int = (int)Math.floor(Math.random() * (max - min + 1) + min);
                         suggestedTracks.add(albumTracks.get(random_int));
-                        //System.out.println("Track scelta random: " + albumTracks.get(random_int).getTrack().getTrackName());
                     }
                 }
             }
-
             for(Track t : suggestedTracks){
                 suggested.add(new Element(t.getTrack().getTrackId(),t.getTrack().getTrackName(),"track",t.getTrack().getArtistName()));
-                //System.out.println("TRACK: " + t.getTrack().getTrackName() + "ARTISTA: " + t.getTrack().getArtistName());
             }
-
-        } catch(SQLException e) {
+        } catch(Exception e) {
             e.printStackTrace();
-        }catch(Exception e){e.printStackTrace();} finally {
+        } finally {
             if (connection != null) {
                 assert statement != null;
                 statement.close();
                 connection.close();
             }
         }
-
-
         return suggested;
     }
 
-    private void onSuggestedSelected(Element newValue) {
-        addButton.setDisable(false);
-    }
-
-    private void onPlaylistSelected(Element newValue) {
-        removeButton.setDisable(false);
-    }
-
-    ObservableList<Element> getPlaylistData() throws SQLException {
+    private ObservableList<Element> getPlaylistData() throws SQLException {
         ObservableList<Element> playlist =FXCollections.observableArrayList();
         Connection connection = null;
         Statement statement = null;
         try{
-            //Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery("SELECT * FROM playlist");
@@ -227,7 +207,6 @@ public class PlaylistController {
             }
         }
         if(!playlist.isEmpty()){
-            System.out.println("OGGETTI " + playlist.get(0).getName());
             playlistTableView.setStyle("-fx-border-width: 1px");
         }
         return playlist;
@@ -266,8 +245,6 @@ public class PlaylistController {
             deleteSong.setInt(1, playlistTableView.getItems().get(selectedIndex).getId());
             deleteSong.executeUpdate();
             playlistTableView.getItems().remove(selectedIndex);
-            //removeButton.setDisable(true);
-            //Rimozione dal database
         } catch (NoSuchElementException | SQLException e) {
             showNoSongSelectedAlert();
             e.printStackTrace();
@@ -283,7 +260,6 @@ public class PlaylistController {
         Connection connection = null;
         Statement statement = null;
         try {
-                //Class.forName("com.mysql.cj.jdbc.Driver");
                 connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
                 statement = connection.createStatement();
                 ResultSet rs = statement.executeQuery("SELECT IDsong FROM playlist");
@@ -302,9 +278,8 @@ public class PlaylistController {
                     insertPlaylist.executeUpdate();
                     new Alert(Alert.AlertType.CONFIRMATION, "The song has been successfully added to the playlist").showAndWait();
                     playlistTableView.getItems().add(suggestedTableView.getItems().get(selectedIndex));
-                    addButton.setDisable(true);
                 }else{
-                    showNoSongSelectedAlert();
+                    new Alert(Alert.AlertType.WARNING, "The song is already in your playlist").showAndWait();
                 }
         } catch (NoSuchElementException | SQLException e) {
             showNoSongSelectedAlert();

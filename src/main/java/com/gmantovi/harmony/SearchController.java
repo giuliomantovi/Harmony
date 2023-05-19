@@ -41,19 +41,16 @@ public class SearchController {
 
     public void showOptions(Element element){
         if(element==null) {
-            System.out.println("Elemento nullo");
             return;
         }
         if(element.getType().equals("track")){
             infoBox.setItems(FXCollections.observableArrayList(
                     "General track infos","Get lyrics","Get snippet","Get album songs","Add to playlist"));
-
         }else{
             infoBox.setItems(FXCollections.observableArrayList(
                     "General artist infos","Get discography","Get related artists"));
         }
         infoBox.getSelectionModel().selectFirst();
-        //onInfoBoxUpdated();
     }
 
     @FXML
@@ -166,37 +163,25 @@ public class SearchController {
                     case "Add to playlist" ->{
                         Connection connection = null;
                         Statement statement = null;
-                        try{
-                            //Class.forName("com.mysql.cj.jdbc.Driver");
-                            connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
-                            statement = connection.createStatement();
-                            ResultSet rs = statement.executeQuery("SELECT IDsong FROM playlist");
-                            boolean present = false;
-                            while(rs.next()) {
-                                int id = rs.getInt("IDsong");
-                                if(id == ID){
-                                    present = true;
-                                }
+                        connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
+                        statement = connection.createStatement();
+                        ResultSet rs = statement.executeQuery("SELECT IDsong FROM playlist");
+                        boolean present = false;
+                        while(rs.next()) {
+                            int id = rs.getInt("IDsong");
+                            if(id == ID){
+                                present = true;
                             }
-                            if(!present){
-                                PreparedStatement insertPlaylist = connection.prepareStatement("INSERT INTO playlist (IDsong, song, singer) VALUES (?, ?, ?)");
-                                insertPlaylist.setInt(1, ID);
-                                insertPlaylist.setString(2,song);
-                                insertPlaylist.setString(3, singer);
-                                insertPlaylist.executeUpdate();
-                                showPlaylistInsertionAlert("Playlist updated","The song has been successfully added to the playlist");
-                            }else{
-                                showPlaylistInsertionAlert("Playlist NOT updated","This song is already in your playlist");
-                            }
-
-                        } catch(SQLException e) {
-                            e.printStackTrace();
-                        } finally {
-                            if (connection != null) {
-                                assert statement != null;
-                                statement.close();
-                                connection.close();
-                            }
+                        }
+                        if(!present){
+                            PreparedStatement insertPlaylist = connection.prepareStatement("INSERT INTO playlist (IDsong, song, singer) VALUES (?, ?, ?)");
+                            insertPlaylist.setInt(1, ID);
+                            insertPlaylist.setString(2,song);
+                            insertPlaylist.setString(3, singer);
+                            insertPlaylist.executeUpdate();
+                            showPlaylistInsertionAlert("Playlist updated","The song has been successfully added to the playlist");
+                        }else{
+                            showPlaylistInsertionAlert("Playlist NOT updated","This song is already in your playlist");
                         }
                         infoBox.getSelectionModel().selectFirst();
                     }
@@ -208,9 +193,7 @@ public class SearchController {
                     listView.setEditable(true);
                     listView.setCellFactory(TextFieldListCell.forListView());
                 }
-            }catch (NullPointerException e){
-                System.out.println("NULLO");
-            }catch (Exception e){
+            } catch (Exception e){
                 e.printStackTrace();
             }
         }
@@ -228,6 +211,11 @@ public class SearchController {
         alert.showAndWait();
     }
 
+    /**
+     * Searches for a track or an artist (API call), given the textfield string.
+     * A track must contain '-' as the separator between track name and artist
+     * Put results in the tableview
+     */
     @FXML
     public void onSearchButtonClicked() throws IOException {
         ObservableList<Element> elements = FXCollections.observableArrayList();
@@ -260,9 +248,7 @@ public class SearchController {
                 tableView.setItems(null);
                 System.out.println("table view vuota");
             }
-        }catch (NullPointerException e){
-            System.out.println("NULLO");
-        }catch (Exception e){
+        } catch (Exception e){
             e.printStackTrace();
         }
     }
