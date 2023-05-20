@@ -1,64 +1,45 @@
+/*
+ *GNU GENERAL PUBLIC LICENSE
+ *Version 3, 29 June 2007
+ *
+ * Copyright (C) 2007 by Giulio Mantovi
+ * Everyone is permitted to copy and distribute verbatim copies
+ * of this license document, but changing it is not allowed.
+ */
 package com.gmantovi.harmony;
 
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 
-import javafx.event.ActionEvent;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Objects;
-
+/**
+ * Controller for displaying menu and related sections
+ */
 public class MenuController {
     @FXML private BorderPane borderPane;
-    @FXML private Button homeButton;
-    @FXML private Button playListButton;
-    @FXML private Button searchButton;
-    @FXML private AnchorPane homeAnchorPane;
 
     @FXML
-    public void initialize() throws IOException {
-
+    public void initialize(){
     }
 
     @FXML
-    public void switchToHome(ActionEvent event) throws IOException {
-        System.out.println("HOME");
+    public void switchToHome() throws IOException {
         Parent center = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("home.fxml")));
         borderPane.setCenter(center);
-        //Parent right = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("chartList.fxml")));
-        //borderPane.setRight(right);
-        //borderPane.getScene().getWindow().setWidth(borderPane.getScene().getWidth() + 0.001);
-        //Stage window = (Stage) borderPane.getScene().getWindow();
-        //window.setScene(new Scene(borderPane));
-        //window.show();
-        //((Node)(event.getSource())).getScene().getWindow().hide();
-        //Scene scene = new Scene(borderPane);
-        //Stage s = HarmonyApplication.getStage();
-        //stage.setScene(scene);
     }
 
     @FXML
-    public void switchToSearch(ActionEvent event) throws IOException {
-        System.out.println("SEARCH");
+    public void switchToSearch() throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("search.fxml")));
         borderPane.setCenter(root);
     }
 
     @FXML
-    public void switchToPlaylist(ActionEvent event) throws IOException {
-        System.out.println("PLAYLIST");
+    public void switchToPlaylist() throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("playlist.fxml")));
         borderPane.setCenter(root);
     }

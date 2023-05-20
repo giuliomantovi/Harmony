@@ -1,3 +1,12 @@
+/*
+*GNU GENERAL PUBLIC LICENSE
+*Version 3, 29 June 2007
+*
+* Copyright (C) 2007 by Giulio Mantovi, contributed by sachin handiekar and others, full credits in read me
+* Everyone is permitted to copy and distribute verbatim copies
+* of this license document, but changing it is not allowed.
+*/
+
 package com.gmantovi.harmony;
 
 import com.gmantovi.harmony.config.Constants;
@@ -26,6 +35,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+/**
+ * Class for getting all the music data needed from the API
+ */
 public class MusixMatchAPI {
     /**
      * A musiXmatch API Key.

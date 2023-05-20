@@ -1,3 +1,12 @@
+/*
+ *GNU GENERAL PUBLIC LICENSE
+ *Version 3, 29 June 2007
+ *
+ * Copyright (C) 2007 by Giulio Mantovi, contributed by sachin handiekar and others, full credits in read me
+ * Everyone is permitted to copy and distribute verbatim copies
+ * of this license document, but changing it is not allowed.
+ */
+
 package com.gmantovi.harmony;
 
 import java.io.BufferedReader;
@@ -7,25 +16,28 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+
+/**
+ * Class for building the URL request and sending it
+ */
 public class MusixMatchRequest {
-    /**
-     * Declares API_KEY value for the k-v mapping format.
-     */
-    public static final String API_KEY = "apikey";
-    /**
-     * Declares my MusixMatchAPI personal API key for the requests.
-     */
-    public static final String MY_API_KEY = "391689594f1ad1d992b2efd5fc5862ef";
+
     /**
      * API url, last 2 digits represent the version number.
      */
     public static final String API_URL = "https://api.musixmatch.com/ws/1.1/";
 
+    /**
+     * This method is used to get json responses from the API
+     *
+     * @param requestString
+     *            String containing API method name and call parameters, properly formatted for the URL
+     * @return a string containing the json response from the API
+     */
     public static String sendRequest(String requestString) {
         StringBuilder buffer = new StringBuilder();
         try {
             String apiUrl = API_URL + requestString;
-            System.out.println("STRINGA RICHIESTA = " + apiUrl);
             URL url = new URL(apiUrl);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(
@@ -39,7 +51,6 @@ public class MusixMatchRequest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return buffer.toString();
     }
 
@@ -52,7 +63,6 @@ public class MusixMatchRequest {
      */
     public static String getURLString(String methodName, Map<String, Object> params) {
         StringBuilder paramString = new StringBuilder();
-
         paramString.append(methodName).append("?");
 
         for (Map.Entry<String, Object> entry : params.entrySet()) {

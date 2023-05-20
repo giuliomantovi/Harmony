@@ -1,13 +1,21 @@
+/*
+ *GNU GENERAL PUBLIC LICENSE
+ *Version 3, 29 June 2007
+ *
+ * Copyright (C) 2007 by Giulio Mantovi
+ * Everyone is permitted to copy and distribute verbatim copies
+ * of this license document, but changing it is not allowed.
+ */
 package com.gmantovi.harmony;
 
+/**
+ * Element representing a track or an artist in the GUI components
+ */
 public class Element {
     private Integer id;
     private String name;
     private String type;
     private String authorName;
-    //private Integer authorID;
-
-    public Element() { this(null,null,null); }
 
     public Element(Integer id, String name, String type) {
         this.id = id;

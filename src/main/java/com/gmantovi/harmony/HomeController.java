@@ -1,3 +1,11 @@
+/*
+ *GNU GENERAL PUBLIC LICENSE
+ *Version 3, 29 June 2007
+ *
+ * Copyright (C) 2007 by Giulio Mantovi
+ * Everyone is permitted to copy and distribute verbatim copies
+ * of this license document, but changing it is not allowed.
+ */
 package com.gmantovi.harmony;
 
 import com.gmantovi.harmony.config.Constants;
@@ -9,7 +17,9 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 
 import java.util.List;
-
+/**
+ * Controller for the home/first section of the menu
+ */
 public class HomeController {
     @FXML private ListView<String> listView;
     @FXML private Label listTitle;

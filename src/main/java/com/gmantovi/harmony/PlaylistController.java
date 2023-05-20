@@ -1,3 +1,11 @@
+/*
+ *GNU GENERAL PUBLIC LICENSE
+ *Version 3, 29 June 2007
+ *
+ * Copyright (C) 2007 by Giulio Mantovi
+ * Everyone is permitted to copy and distribute verbatim copies
+ * of this license document, but changing it is not allowed.
+ */
 package com.gmantovi.harmony;
 
 import com.gmantovi.harmony.config.Constants;
@@ -18,7 +26,9 @@ import java.sql.*;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
+/**
+ * Controller for the playlist/third section of the menu
+ */
 public class PlaylistController {
 
     @FXML private Button addButton;
@@ -105,7 +115,6 @@ public class PlaylistController {
                 }
 
                 String country = m.getArtist(track.getTrack().getArtistId()).getArtist().getArtistCountry();
-                //System.out.println("STATO: "+ country);
                 if(country != null && !country.equals("")){
                     if(countriesOccurrences.containsKey(country)){
                         countriesOccurrences.put(country, countriesOccurrences.get(country) + 1);
@@ -113,10 +122,7 @@ public class PlaylistController {
                         countriesOccurrences.put(country,1);
                     }
                 }
-
-                //FARE THREAD PER QUESTO METODO?
             }
-
             //getting most frequent artist, genre and country in the user playlist
             Integer topArtist;
             String topGenre;
@@ -188,13 +194,13 @@ public class PlaylistController {
                         suggestedTracks.add(albumTracks.get(random_int));
                     }
                 }
-
             }
 
             for(Track t : suggestedTracks){
                 suggested.add(new Element(t.getTrack().getTrackId(),t.getTrack().getTrackName(),"track",t.getTrack().getArtistName()));
             }
         } catch(Exception e) {
+
             e.printStackTrace();
         } finally {
             if (connection != null) {
@@ -223,6 +229,7 @@ public class PlaylistController {
             }
         } catch(SQLException e) {
             e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Couldn't establish connection with databse").showAndWait();
         } finally {
             if (connection != null) {
                 assert statement != null;

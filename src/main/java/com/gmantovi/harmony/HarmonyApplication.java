@@ -1,3 +1,11 @@
+/*
+ *GNU GENERAL PUBLIC LICENSE
+ *Version 3, 29 June 2007
+ *
+ * Copyright (C) 2007 by Giulio Mantovi
+ * Everyone is permitted to copy and distribute verbatim copies
+ * of this license document, but changing it is not allowed.
+ */
 package com.gmantovi.harmony;
 
 import javafx.application.Application;
@@ -9,7 +17,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.util.Objects;
-
+/**
+ * Launcher Class for the application
+ */
 public class HarmonyApplication extends Application{
     public static void main(String[] args) {
         launch(args);
@@ -17,7 +27,7 @@ public class HarmonyApplication extends Application{
 
     @Override
     public void start(Stage stage) throws Exception {
-        BorderPane b = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("home-page-overview.fxml")));
+        BorderPane b = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("menu.fxml")));
         AnchorPane a = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("home.fxml")));
         b.setCenter(a);
         Scene scene = new Scene(b);
