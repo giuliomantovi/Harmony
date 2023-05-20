@@ -15,7 +15,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldListCell;
 
-import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 
@@ -23,14 +22,12 @@ public class SearchController {
     @FXML private ListView<String> listView;
     @FXML private TextField searchField;
     @FXML private TableView<Element> tableView;
-    @FXML private Button searchButton;
     @FXML private TableColumn<Element, String> nameColumn;
     @FXML private TableColumn<Element, String> typeColumn;
-    @FXML private TableColumn<Element, Integer> idColumn;
     @FXML private ComboBox<String> infoBox;
 
     @FXML
-    public void initialize() throws IOException {
+    public void initialize(){
         searchField.setTooltip(new Tooltip("If you are looking for a track, insert both track name and artist name \n separated by '-'. Example: 'Billie Jean-Michael Jackson' "));
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -161,8 +158,8 @@ public class SearchController {
                     }
                     case "Add to playlist" ->{
                         try {
-                            Connection connection = null;
-                            Statement statement = null;
+                            Connection connection;
+                            Statement statement;
                             connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
                             statement = connection.createStatement();
                             ResultSet rs = statement.executeQuery("SELECT IDsong FROM playlist");
@@ -211,7 +208,7 @@ public class SearchController {
      * Puts results in the tableview
      */
     @FXML
-    public void onSearchButtonClicked() throws IOException {
+    public void onSearchButtonClicked(){
         ObservableList<Element> elements = FXCollections.observableArrayList();
         try {
             MusixMatchAPI m = new MusixMatchAPI(Constants.PERSONAL_API_KEY);

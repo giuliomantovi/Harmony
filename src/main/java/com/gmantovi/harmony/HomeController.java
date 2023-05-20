@@ -6,28 +6,41 @@ import com.gmantovi.harmony.gsonClasses.track.Track;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.cell.TextFieldListCell;
 
-import java.io.IOException;
 import java.util.List;
 
 public class HomeController {
-    @FXML private AnchorPane homeAnchorPane;
-    @FXML private Button topArtists;
-    @FXML private Button topSongs;
     @FXML private ListView<String> listView;
     @FXML private Label listTitle;
     @FXML private ComboBox<String> countryBox;
 
     @FXML
-    public void initialize() throws IOException {
+    public void initialize(){
         countryBox.setItems(FXCollections.observableArrayList(
                 "IT","GB","FR","US","DE"));
         countryBox.getSelectionModel().selectFirst();
     }
 
     @FXML
-    public void showTopArtists() throws IOException {
+    public void onCountryUpdate(){
+        if (listTitle.getText().equals("Top 10 artists in")) {
+            showTopArtists();
+        }
+        if(listTitle.getText().equals("Top 10 songs in")){
+            showTopSongs();
+        }
+    }
+
+    private void makeEditable() {
+        if(!listView.getItems().isEmpty()) {
+            listView.setEditable(true);
+            listView.setCellFactory(TextFieldListCell.forListView());
+        }
+    }
+
+    @FXML
+    public void showTopArtists(){
         listTitle.setText("Top 10 artists in");
         listView.setStyle("-fx-border-width: 1px");
         try {
@@ -37,14 +50,16 @@ public class HomeController {
                     .map(artist -> artist.getArtist().getArtistName())
                     .toList();
             listView.setItems(FXCollections.observableArrayList(artists));
+            makeEditable();
         } catch (Exception e){
+            listView.setStyle("-fx-background-color: #242325");
             new Alert(Alert.AlertType.ERROR, "Couldn't establish connection").showAndWait();
             e.printStackTrace();
         }
     }
 
     @FXML
-    public void showTopSongs() throws IOException {
+    public void showTopSongs(){
         listTitle.setText("Top 10 songs in");
         listView.setStyle("-fx-border-width: 2px");
         try {
@@ -54,20 +69,11 @@ public class HomeController {
                     .map(t -> t.getTrack().getTrackName() + " - " + t.getTrack().getArtistName())
                     .toList();
             listView.setItems(FXCollections.observableArrayList(tracks));
+            makeEditable();
         } catch (Exception e){
+            listView.setStyle("-fx-background-color: #242325");
             new Alert(Alert.AlertType.ERROR, "Couldn't establish connection").showAndWait();
             e.printStackTrace();
         }
     }
-
-    @FXML
-    public void onCountryUpdate() throws IOException {
-        if (listTitle.getText().equals("Top 10 artists in")) {
-            showTopArtists();
-        }
-        if(listTitle.getText().equals("Top 10 songs in")){
-            showTopSongs();
-        }
-    }
-
 }

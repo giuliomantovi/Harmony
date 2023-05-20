@@ -14,7 +14,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -34,7 +33,7 @@ public class PlaylistController {
     @FXML private TableView<Element> suggestedTableView;
 
     @FXML
-    public void initialize() throws IOException, SQLException {
+    public void initialize() throws SQLException {
         playlistIDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         playlistSingerColumn.setCellValueFactory(new PropertyValueFactory<>("authorName"));
         playlistSongColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -55,13 +54,15 @@ public class PlaylistController {
         removeButton.setDisable(false);
     }
 
-    private void executeTask () throws SQLException {
+    private void executeTask (){
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         executor.submit(() -> {
             try {
                 suggestedTableView.setItems(getSuggestedData());
+                if (suggestedTableView.getItems().isEmpty()) new Alert(Alert.AlertType.ERROR, "Couldn't establish connection").showAndWait();
             } catch (SQLException e) {
                 e.printStackTrace();
+                new Alert(Alert.AlertType.ERROR, "Couldn't find suggestions").showAndWait();
             }
         });
     }
@@ -261,7 +262,7 @@ public class PlaylistController {
     @FXML
     private void handleRemoveSong() {
         try {
-            Connection connection = null;
+            Connection connection;
             int selectedIndex = selectedIndex(playlistTableView);
             connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
             PreparedStatement deleteSong = connection.prepareStatement("DELETE FROM playlist WHERE IDsong=?");
