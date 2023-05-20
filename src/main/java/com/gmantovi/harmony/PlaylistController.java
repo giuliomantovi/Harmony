@@ -17,6 +17,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class PlaylistController {
 
@@ -40,7 +42,7 @@ public class PlaylistController {
         suggestedSongColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         suggestedIDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         suggestedSingerColumn.setCellValueFactory(new PropertyValueFactory<>("authorName"));
-        suggestedTableView.setItems(getSuggestedData());
+        executeTask();
         playlistTableView.getSelectionModel().selectedItemProperty().addListener((observable) -> onPlaylistSelected());
         suggestedTableView.getSelectionModel().selectedItemProperty().addListener((observable) -> onSuggestedSelected());
     }
@@ -53,120 +55,141 @@ public class PlaylistController {
         removeButton.setDisable(false);
     }
 
-    private ObservableList<Element> getSuggestedData() throws SQLException {
+    private void executeTask () throws SQLException {
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        executor.submit(() -> {
+            try {
+                suggestedTableView.setItems(getSuggestedData());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
 
-        //ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private ObservableList<Element> getSuggestedData() throws SQLException {
+        if (playlistTableView.getItems().isEmpty()) return null;
         ObservableList<Element> suggested =FXCollections.observableArrayList();
         Connection connection = null;
         Statement statement = null;
         try{
-            MusixMatch m = new MusixMatch(Constants.PERSONAL_API_KEY);
+            MusixMatchAPI m = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
             connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery("SELECT IDsong FROM playlist");
             HashMap<String,Integer> genresOccurrences = new HashMap<>();
             HashMap<Integer,Integer> singersOccurrences = new HashMap<>();
             HashMap<String,Integer> countriesOccurrences = new HashMap<>();
-            //consigliare una track dell'album più visto, una delle top 10 della nazionalità più vista dello stile più visto, uno del primo artista correlato a quello più visto,
-            //track più popolare dell'album più visto?
+
             while(rs.next()) {
                 int id = rs.getInt("IDsong");
                 Track track = m.getTrack(id);
                 //getting genres, singers and countries occurences in the playlist
-                //executor.submit(() -> {
-                    List<MusicGenreList> genre = track.getTrack().getPrimaryGenres().getMusicGenreList();
-                    //SI POTREBBE OTTIMIZZARE CON UNA FUNZIONE UNICA (?)
-                    if(!genre.isEmpty()){
-                        String genreName = genre.get(0).getMusicGenre().getMusicGenreName();
-                        if(genresOccurrences.containsKey(genreName)){
-                            genresOccurrences.put(genreName, genresOccurrences.get(genreName) + 1);
-                        }else{
-                            genresOccurrences.put(genreName,1);
-                        }
+                List<MusicGenreList> genre = track.getTrack().getPrimaryGenres().getMusicGenreList();
+                if(!genre.isEmpty()){
+                    String genreName = genre.get(0).getMusicGenre().getMusicGenreName();
+                    if(genresOccurrences.containsKey(genreName)){
+                        genresOccurrences.put(genreName, genresOccurrences.get(genreName) + 1);
+                    }else{
+                        genresOccurrences.put(genreName,1);
                     }
-                    Integer singer = track.getTrack().getArtistId();
-                    if(singer != null){
-                        if(singersOccurrences.containsKey(singer)){
-                            singersOccurrences.put(singer, singersOccurrences.get(singer) + 1);
-                        }else{
-                            singersOccurrences.put(singer,1);
-                        }
-                    }
-                //});
+                }
 
-                //executor.submit(() -> {
-                    String country = m.getArtist(track.getTrack().getArtistId()).getArtist().getArtistCountry();
-                    //System.out.println("STATO: "+ country);
-                    if(country != null && !country.equals("")){
-                        if(countriesOccurrences.containsKey(country)){
-                            countriesOccurrences.put(country, countriesOccurrences.get(country) + 1);
-                        }else{
-                            countriesOccurrences.put(country,1);
-                        }
+                Integer singer = track.getTrack().getArtistId();
+                if(singer != null){
+                    if(singersOccurrences.containsKey(singer)){
+                        singersOccurrences.put(singer, singersOccurrences.get(singer) + 1);
+                    }else{
+                        singersOccurrences.put(singer,1);
                     }
-                //});
+                }
+
+                String country = m.getArtist(track.getTrack().getArtistId()).getArtist().getArtistCountry();
+                //System.out.println("STATO: "+ country);
+                if(country != null && !country.equals("")){
+                    if(countriesOccurrences.containsKey(country)){
+                        countriesOccurrences.put(country, countriesOccurrences.get(country) + 1);
+                    }else{
+                        countriesOccurrences.put(country,1);
+                    }
+                }
 
                 //FARE THREAD PER QUESTO METODO?
             }
-            //boolean terminated = executor.awaitTermination(6000, TimeUnit.MILLISECONDS);
 
             //getting most frequent artist, genre and country in the user playlist
-            Integer topArtist = null;
-            String topGenre = null;
+            Integer topArtist;
+            String topGenre;
             String topCountry;
-            if(!singersOccurrences.isEmpty()) {topArtist = Collections.max(singersOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey();}
-            if(!genresOccurrences.isEmpty()) {topGenre = Collections.max(genresOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey();}
-            if(!countriesOccurrences.isEmpty()) {topCountry = Collections.max(countriesOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey();}else{topCountry=null;}
-            System.out.println("ARTISTA TOP: "+topArtist+" GENERE TOP: "+topGenre+ " LINGUA TOP: "+topCountry);
+            if(!singersOccurrences.isEmpty()) {
+                topArtist = Collections.max(singersOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey();
+            } else {
+                topArtist = null;
+            }
+            if(!genresOccurrences.isEmpty()) {
+                topGenre = Collections.max(genresOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey();
+            } else {
+                topGenre = null;
+            }
+            if(!countriesOccurrences.isEmpty()) {
+                topCountry = Collections.max(countriesOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey();
+            }else{
+                topCountry=null;
+            }
 
-            //adding at most 3 suggested tracks selecting them from the top 50 songs from the most frequent country on the playlist
-            List<Track> topTracks = m.getTracksChart(topCountry,50,"top");
+            System.out.printf("TOP ARTISTI: " + topArtist + " TOP GENRE: " + topGenre + " TOP COUNTRY: " + topCountry);
             List<Track> suggestedTracks = new ArrayList<>();
-            for(Track t: topTracks){
-                List<MusicGenreList> genresList = t.getTrack().getPrimaryGenres().getMusicGenreList();
-                if(!genresList.isEmpty()&&genresList.get(0).getMusicGenre().getMusicGenreName().equals(topGenre)){
-                    if(suggestedTracks.size()<3){
-                        suggestedTracks.add(t);
-                    }else{
-                        break;
+            if(topCountry != null){
+                //adding at most 3 suggested tracks selecting them from the top 50 songs from the most frequent country on the playlist
+                List<Track> topTracks = m.getTracksChart(topCountry,50,"top");
+                for(Track t: topTracks){
+                    List<MusicGenreList> genresList = t.getTrack().getPrimaryGenres().getMusicGenreList();
+                    if(!genresList.isEmpty()&&genresList.get(0).getMusicGenre().getMusicGenreName().equals(topGenre)){
+                        if(suggestedTracks.size()<3){
+                            suggestedTracks.add(t);
+                        }else{
+                            break;
+                        }
                     }
                 }
             }
 
             if(topArtist != null) {
                 //adding one song of the most frequent artist in the playlist
-                List<Album> albumsList = m.getArtistAlbums(topArtist,20);
-                if(!albumsList.isEmpty()){
+                List<Album> albumsList = m.getArtistAlbums(topArtist, 20);
+                if (!albumsList.isEmpty()) {
                     int min = 0;
-                    int max = albumsList.size()-1;
-                    int random_int = (int)Math.floor(Math.random() * (max - min + 1) + min);
+                    int max = albumsList.size() - 1;
+                    int random_int = (int) Math.floor(Math.random() * (max - min + 1) + min);
                     Album randomAlbum = albumsList.get(random_int);
-                    List<Track> albumTracks = m.getAlbumTracks(randomAlbum.getAlbum().getAlbumId(),50);
+                    List<Track> albumTracks = m.getAlbumTracks(randomAlbum.getAlbum().getAlbumId(), 50);
                     Track bestTrack = Collections.max(albumTracks, Comparator.comparingInt(o -> o.getTrack().getTrackRating()));
                     suggestedTracks.add(bestTrack);
                 }
+
                 //adding song from most popular albums of 2 artists related to the most frequent artist in the playlist
-                List<Artist> relatedArtists = m.getArtistsList("",2,"","get_related_artist",topArtist);
+                List<Artist> relatedArtists = m.getArtistsList("", 2, "", "get_related_artist", topArtist);
                 List<Album> relatedAlbums = new ArrayList<>();
-                for(Artist artist : relatedArtists){
-                    List<Album> artistAlbums = m.getArtistAlbums(artist.getArtist().getArtistId(),50);
-                    if(!artistAlbums.isEmpty()){
+                for (Artist artist : relatedArtists) {
+                    List<Album> artistAlbums = m.getArtistAlbums(artist.getArtist().getArtistId(), 50);
+                    if (!artistAlbums.isEmpty()) {
                         int min = 0;
-                        int max = artistAlbums.size()-1;
-                        int random_int = (int)Math.floor(Math.random() * (max - min + 1) + min);
+                        int max = artistAlbums.size() - 1;
+                        int random_int = (int) Math.floor(Math.random() * (max - min + 1) + min);
                         relatedAlbums.add(artistAlbums.get(random_int));
                     }
                 }
-                for(Album album : relatedAlbums){
-                    List<Track> albumTracks = m.getAlbumTracks(album.getAlbum().getAlbumId(),30);
-                    if(!albumTracks.isEmpty()){
+                for (Album album : relatedAlbums) {
+                    List<Track> albumTracks = m.getAlbumTracks(album.getAlbum().getAlbumId(), 30);
+                    if (!albumTracks.isEmpty()) {
                         int min = 0;
-                        int max = albumTracks.size()-1;
-                        int random_int = (int)Math.floor(Math.random() * (max - min + 1) + min);
+                        int max = albumTracks.size() - 1;
+                        int random_int = (int) Math.floor(Math.random() * (max - min + 1) + min);
                         suggestedTracks.add(albumTracks.get(random_int));
                     }
                 }
+
             }
+
             for(Track t : suggestedTracks){
                 suggested.add(new Element(t.getTrack().getTrackId(),t.getTrack().getTrackName(),"track",t.getTrack().getArtistName()));
             }
@@ -281,6 +304,7 @@ public class PlaylistController {
                 }else{
                     new Alert(Alert.AlertType.WARNING, "The song is already in your playlist").showAndWait();
                 }
+                suggestedTableView.getItems().remove(selectedIndex);
         } catch (NoSuchElementException | SQLException e) {
             showNoSongSelectedAlert();
             e.printStackTrace();

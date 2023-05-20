@@ -33,7 +33,7 @@
          <columns>
             <TableColumn fx:id="suggestedIDColumn" minWidth="0.0" prefWidth="0.0" text="ID" visible="false" />
             <TableColumn fx:id="suggestedSongColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="116.79998934268951" text="Song" />
-            <TableColumn fx:id="suggestedSingerColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="108.80001678466795" text="Singer" />
+            <TableColumn fx:id="suggestedSingerColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="108.80001678466795" prefWidth="108.80001678466795" text="Singer" />
          </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

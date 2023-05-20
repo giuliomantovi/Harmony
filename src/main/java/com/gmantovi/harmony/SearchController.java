@@ -6,7 +6,6 @@ import com.gmantovi.harmony.gsonClasses.artist.Alias;
 import com.gmantovi.harmony.gsonClasses.artist.Artist;
 import com.gmantovi.harmony.gsonClasses.lyrics.Lyrics;
 import com.gmantovi.harmony.gsonClasses.snippet.Snippet;
-import com.gmantovi.harmony.gsonClasses.track.MusicGenre;
 import com.gmantovi.harmony.gsonClasses.track.MusicGenreList;
 import com.gmantovi.harmony.gsonClasses.track.Track;
 import javafx.collections.FXCollections;
@@ -58,7 +57,7 @@ public class SearchController {
         if(infoBox.getSelectionModel().getSelectedItem()!=null) {
             try {
                 listView.setStyle("-fx-border-width: 1px");
-                MusixMatch m = new MusixMatch(Constants.PERSONAL_API_KEY);
+                MusixMatchAPI m = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
                 ObservableList<String> infos = null;
                 Integer ID = tableView.getSelectionModel().getSelectedItem().getId();
                 String song = tableView.getSelectionModel().getSelectedItem().getName();
@@ -161,29 +160,35 @@ public class SearchController {
                         );
                     }
                     case "Add to playlist" ->{
-                        Connection connection = null;
-                        Statement statement = null;
-                        connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
-                        statement = connection.createStatement();
-                        ResultSet rs = statement.executeQuery("SELECT IDsong FROM playlist");
-                        boolean present = false;
-                        while(rs.next()) {
-                            int id = rs.getInt("IDsong");
-                            if(id == ID){
-                                present = true;
+                        try {
+                            Connection connection = null;
+                            Statement statement = null;
+                            connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
+                            statement = connection.createStatement();
+                            ResultSet rs = statement.executeQuery("SELECT IDsong FROM playlist");
+                            boolean present = false;
+                            while (rs.next()) {
+                                int id = rs.getInt("IDsong");
+                                if (id == ID) {
+                                    present = true;
+                                }
                             }
+                            if (!present) {
+                                PreparedStatement insertPlaylist = connection.prepareStatement("INSERT INTO playlist (IDsong, song, singer) VALUES (?, ?, ?)");
+                                insertPlaylist.setInt(1, ID);
+                                insertPlaylist.setString(2, song);
+                                insertPlaylist.setString(3, singer);
+                                insertPlaylist.executeUpdate();
+                                new Alert(Alert.AlertType.CONFIRMATION, "This song has been successfully added to the playlist").showAndWait();
+                            } else {
+                                new Alert(Alert.AlertType.WARNING, "This song is already in your playlist").showAndWait();
+                            }
+                        }catch(SQLException e){
+                            e.printStackTrace();
+                            new Alert(Alert.AlertType.ERROR, "Couldn't add song to the playlist").showAndWait();
+                        }finally {
+                            infoBox.getSelectionModel().selectFirst();
                         }
-                        if(!present){
-                            PreparedStatement insertPlaylist = connection.prepareStatement("INSERT INTO playlist (IDsong, song, singer) VALUES (?, ?, ?)");
-                            insertPlaylist.setInt(1, ID);
-                            insertPlaylist.setString(2,song);
-                            insertPlaylist.setString(3, singer);
-                            insertPlaylist.executeUpdate();
-                            showPlaylistInsertionAlert("Playlist updated","The song has been successfully added to the playlist");
-                        }else{
-                            showPlaylistInsertionAlert("Playlist NOT updated","This song is already in your playlist");
-                        }
-                        infoBox.getSelectionModel().selectFirst();
                     }
                     default -> {
                     }
@@ -201,26 +206,15 @@ public class SearchController {
     }
 
     /**
-     * Shows a simple warning dialog
-     */
-    void showPlaylistInsertionAlert(String header,String context) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Playlist insertion");
-        alert.setHeaderText(header);
-        alert.setContentText(context);
-        alert.showAndWait();
-    }
-
-    /**
      * Searches for a track or an artist (API call), given the textfield string.
      * A track must contain '-' as the separator between track name and artist
-     * Put results in the tableview
+     * Puts results in the tableview
      */
     @FXML
     public void onSearchButtonClicked() throws IOException {
         ObservableList<Element> elements = FXCollections.observableArrayList();
         try {
-            MusixMatch m = new MusixMatch(Constants.PERSONAL_API_KEY);
+            MusixMatchAPI m = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
             if(searchField.getText().contains("-")){
                 String[] params = searchField.getText().split("-");
                 if((!params[0].isEmpty())&&(!params[1].isEmpty())){
@@ -246,10 +240,11 @@ public class SearchController {
                 System.out.println(tableView.getItems().get(0).getId());
             }else{
                 tableView.setItems(null);
-                System.out.println("table view vuota");
+                new Alert(Alert.AlertType.WARNING, "Item not found").showAndWait();
             }
         } catch (Exception e){
             e.printStackTrace();
+            new Alert(Alert.AlertType.WARNING, "Item not found").showAndWait();
         }
     }
 }

@@ -1,28 +1,17 @@
 package com.gmantovi.harmony;
 
-import com.gmantovi.harmony.gsonClasses.album.Album;
+import com.gmantovi.harmony.config.Constants;
 import com.gmantovi.harmony.gsonClasses.artist.Artist;
 import com.gmantovi.harmony.gsonClasses.track.Track;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
-public class homeController {
+public class HomeController {
     @FXML private AnchorPane homeAnchorPane;
     @FXML private Button topArtists;
     @FXML private Button topSongs;
@@ -42,15 +31,14 @@ public class homeController {
         listTitle.setText("Top 10 artists in");
         listView.setStyle("-fx-border-width: 1px");
         try {
-            MusixMatch m = new MusixMatch("391689594f1ad1d992b2efd5fc5862ef");
+            MusixMatchAPI m = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
             List<Artist> l = m.getArtistsList(countryBox.getSelectionModel().getSelectedItem(),10,"top","get_artists_chart",-1);
             List<String> artists = l.stream()
                     .map(artist -> artist.getArtist().getArtistName())
                     .toList();
             listView.setItems(FXCollections.observableArrayList(artists));
-        }catch (NullPointerException e){
-            System.out.println("NULLO");
-        }catch (Exception e){
+        } catch (Exception e){
+            new Alert(Alert.AlertType.ERROR, "Couldn't establish connection").showAndWait();
             e.printStackTrace();
         }
     }
@@ -60,15 +48,14 @@ public class homeController {
         listTitle.setText("Top 10 songs in");
         listView.setStyle("-fx-border-width: 2px");
         try {
-            MusixMatch m = new MusixMatch("391689594f1ad1d992b2efd5fc5862ef");
+            MusixMatchAPI m = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
             List<Track> l = m.getTracksChart(countryBox.getSelectionModel().getSelectedItem(),10,"top");
             List<String> tracks = l.stream()
                     .map(t -> t.getTrack().getTrackName() + " - " + t.getTrack().getArtistName())
                     .toList();
             listView.setItems(FXCollections.observableArrayList(tracks));
-        }catch (NullPointerException e){
-            System.out.println("NULLO");
-        }catch (Exception e){
+        } catch (Exception e){
+            new Alert(Alert.AlertType.ERROR, "Couldn't establish connection").showAndWait();
             e.printStackTrace();
         }
     }

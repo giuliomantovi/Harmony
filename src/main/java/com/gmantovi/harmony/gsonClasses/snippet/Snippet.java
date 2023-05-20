@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * Objects of this class represent a lyric snippet from the
- * MusixMatch API. Code based on existing jMusixMatch classes.
+ * MusixMatchAPI API. Code based on existing jMusixMatch classes.
  */
 public class Snippet {
 

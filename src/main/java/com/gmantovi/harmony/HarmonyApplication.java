@@ -4,10 +4,10 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
 
 import java.util.Objects;
 
@@ -25,10 +25,8 @@ public class HarmonyApplication extends Application{
         b.setCenter(a);
         Scene scene = new Scene(b);
         stage.setTitle("Harmony");
-        //stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("icons/address_book_512.png"))));
+        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("icons/harmony_icon.png"))));
         stage.setScene(scene);
         stage.show();
     }
-
-
 }

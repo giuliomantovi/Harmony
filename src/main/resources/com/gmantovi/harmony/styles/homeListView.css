@@ -1,3 +1,7 @@
+.list-view{
+    -fx-background-color: #242325;
+}
+
 .list-cell {
     -fx-text-fill: white;
     -fx-font-size: 15px;

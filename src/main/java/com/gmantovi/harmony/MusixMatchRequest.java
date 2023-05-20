@@ -13,7 +13,7 @@ public class MusixMatchRequest {
      */
     public static final String API_KEY = "apikey";
     /**
-     * Declares my MusixMatch personal API key for the requests.
+     * Declares my MusixMatchAPI personal API key for the requests.
      */
     public static final String MY_API_KEY = "391689594f1ad1d992b2efd5fc5862ef";
     /**

@@ -28,19 +28,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-public class MusixMatch {
+public class MusixMatchAPI {
     /**
      * A musiXmatch API Key.
      */
     private final String apiKey;
 
     /**
-     * MusixMatch Constructor with API-Key.
+     * MusixMatchAPI Constructor with API-Key.
      *
      * @param apiKey
      *            A musiXmatch API Key.
      */
-    public MusixMatch(String apiKey) {
+    public MusixMatchAPI(String apiKey) {
         this.apiKey = apiKey;
     }
 
