@@ -1,17 +1,16 @@
 # Harmony
 <img src="src/main/resources/com/gmantovi/harmony/icons/harmony_icon.png" width="100" height="100">
 
-An intuitive application to get all the information about your favourite music
+An intuitive application to get all the information you need about your favourite music
 
 ## Features
-- Realtime matching.
-- Display individual matches in a table.
-- Support text **replacing** and **spliting**.
-- Displays error messages.
-- Text highlighting for  match, error and replacements.
+- Display the current most popular tracks and artists
+- Search for specific artists and tracks to see detailed information (lyrics, genres, discography, related artist...)
+- Create your personal playlist
+- Get song suggestions based on your playlist to explore new music
 - And much more ...
 
->Note: This supports java regex only, since it uses **java regex api**.
+>Note: Except for the song suggestions, the music data is retrieved using https://www.musixmatch.com/ API
 
 ## Screenshots
 
@@ -42,8 +41,9 @@ You can download the latest version of this sofware
 To run the application just double-click the downloaded jar.  
 *It runs only when the JDK is installed correctly.*
 
-## Contribution
-Any contributors are **Welcome** :smiley:
+## Credits
+The MusixMatch Wrapper
 
 ## License
-This software is licensed under MIT License
+This software is licensed under GNU GENERAL PUBLIC LICENSE
+
