@@ -1,8 +1,7 @@
 # Harmony
-<p>
-<img src="Icon.png" width="100" height="100">
-</p>
-A simple application to test your regex.
+<img src="src/main/resources/com/gmantovi/harmony/icons/harmony_icon.png" width="100" height="100">
+
+An intuitive application to get all the information about your favourite music
 
 ## Features
 - Realtime matching.
