@@ -36,6 +36,8 @@ The proper JDK or JRE should be installed in your system to run this application
 ## Download and Usage
 This software can be downloaded here on github.
 
+I inserted my personal MusixMatch api key to send requests, if you reach the API calls limit (2k) you can create a Musixmatch account and 
+change the PERSONAL_API_KEY value in the [Constants](src/main/java/com/gmantovi/harmony/config/Constants.java) file.
 To try the playlist feature (third section of the menu) you need to do the followings:
 - establish a mysql connection with a local database, here is the mySQL WORKBENCH code to create database and table:
   
@@ -54,6 +56,7 @@ To try the playlist feature (third section of the menu) you need to do the follo
 
 - In the file [Constants](src/main/java/com/gmantovi/harmony/config/Constants.java) you have to modify the MYSQL_CONNECTION_URL
   value so that the user and password credentials are correct for your local database.
+
 
 ## Credits
 The MusixMatch Wrapper downloadable at https://github.com/sachin-handiekar/jMusixMatch has been imported and used as a reference to build others gsonClasses.
