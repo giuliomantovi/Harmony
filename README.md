@@ -38,6 +38,7 @@ This software can be downloaded here on github.
 
 To try the playlist feature (third section of the menu) you need to do the followings:
 - establish a mysql connection with a local database, here is the mySQL WORKBENCH code to create database and table:
+  
   CREATE SCHEMA `harmony` ;
 
   CREATE TABLE `harmony`.`playlist` (
