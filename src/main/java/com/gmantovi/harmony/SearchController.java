@@ -228,6 +228,7 @@ public class SearchController {
                     listView.setCellFactory(TextFieldListCell.forListView());
                 }
             } catch (Exception e){
+                System.out.println(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -277,6 +278,7 @@ public class SearchController {
                 new Alert(Alert.AlertType.WARNING, "Item not found").showAndWait();
             }
         } catch (Exception e){
+            System.out.println(e.getMessage());
             e.printStackTrace();
             new Alert(Alert.AlertType.WARNING, "Item not found").showAndWait();
         }
