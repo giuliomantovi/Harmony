@@ -43,10 +43,10 @@ To try the playlist feature (third section of the menu) you need to do the follo
   
   CREATE SCHEMA `harmony` ;
 
-  CREATE TABLE `harmony`.`playlist` (__
-  `IDsong` INT NOT NULL,__
-  `song` VARCHAR(45) NULL,__
-  `singer` VARCHAR(45) NULL,__
+  CREATE TABLE `harmony`.`playlist` (\
+  `IDsong` INT NOT NULL,\
+  `song` VARCHAR(45) NULL,\
+  `singer` VARCHAR(45) NULL,\
   PRIMARY KEY (`IDsong`));
 
 
