@@ -74,7 +74,7 @@ public class SearchController {
         if(infoBox.getSelectionModel().getSelectedItem()!=null) {
             try {
                 listView.setStyle("-fx-border-width: 1px");
-                MusixMatchAPI m = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
+                MusixMatchAPI musixMatchAPI = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
                 ObservableList<String> info = null;
                 Integer ID = tableView.getSelectionModel().getSelectedItem().getId();
                 String song = tableView.getSelectionModel().getSelectedItem().getName();
@@ -82,12 +82,12 @@ public class SearchController {
                 switch (infoBox.getSelectionModel().getSelectedItem()) {
                     //displays in the listview the general information about a track
                     case "General track info" -> {
-                        Track track = m.getTrack(ID);
+                        Track track = musixMatchAPI.getTrack(ID);
                         String genres = "Primary genres: ";
-                        List<MusicGenreList> genreList = track.getTrack().getPrimaryGenres().getMusicGenreList();
+                        List<MusicGenreList> genresList = track.getTrack().getPrimaryGenres().getMusicGenreList();
                         //concatenates the list of genres in a single string
-                        if(!genreList.isEmpty()){
-                            for(MusicGenreList mg : genreList){
+                        if(!genresList.isEmpty()){
+                            for(MusicGenreList mg : genresList){
                                 genres = genres.concat(mg.getMusicGenre().getMusicGenreName() + ", ");
                             }
                         }else{
@@ -106,7 +106,7 @@ public class SearchController {
                     }
                     //displays in the listview the general information about an artist
                     case "General artist info" -> {
-                        Artist artist = m.getArtist(ID);
+                        Artist artist = musixMatchAPI.getArtist(ID);
                         String alias = "Alias: ";
                         //concatenates list of aliases
                         if (!artist.getArtist().getAliasList().isEmpty()) {
@@ -132,14 +132,14 @@ public class SearchController {
                     }
                     //Displays the lyrics of a track in the listview
                     case "Get lyrics" -> {
-                        Lyrics lyrics = m.getLyrics(ID);
+                        Lyrics lyrics = musixMatchAPI.getLyrics(ID);
                         info = FXCollections.observableArrayList((List.of(
                                 "LYRICS:",
                                 lyrics.getLyricsBody())));
                     }
                     //Displays the snippet of a track in the listview
                     case "Get snippet" -> {
-                        Snippet snippet = m.getSnippet(ID);
+                        Snippet snippet = musixMatchAPI.getSnippet(ID);
                         info = FXCollections.observableArrayList((List.of(
                                 "Language: " + snippet.getSnippetLanguage(),
                                 "Snippet: \n" + snippet.getSnippetBody()))
@@ -147,7 +147,7 @@ public class SearchController {
                     }
                     //Displays in the listview at most 50 songs that are in the same album of the song selected
                     case "Get album songs" -> {
-                        List<Track> tracks = m.getAlbumTracks(m.getTrack(ID).getTrack().getAlbumId(), 50);
+                        List<Track> tracks = musixMatchAPI.getAlbumTracks(musixMatchAPI.getTrack(ID).getTrack().getAlbumId(), 50);
                         String tracksList = "SONGS LIST: \n";
                         for (Track t : tracks) {
                             tracksList = tracksList.concat(t.getTrack().getTrackName() + ", \n");
@@ -161,7 +161,7 @@ public class SearchController {
                     }
                     //Displays in the listview the last 200 albums of the artist selected
                     case "Get discography" -> {
-                        List<Album> albums = m.getArtistAlbums(ID, 200);
+                        List<Album> albums = musixMatchAPI.getArtistAlbums(ID, 200);
                         String albumsList = "ALBUMS LIST: \n";
                         for (Album a : albums) {
                             albumsList = albumsList.concat(a.getAlbum().getAlbumName() + ", \n");
@@ -174,15 +174,15 @@ public class SearchController {
                     }
                     //Displays in the listview 10 artists related to the selected one
                     case "Get related artists" ->{
-                        List<Artist> artists = m.getArtistsList("",10,"", Methods.ARTIST_RELATED_GET,ID);
-                        String relatedList = "RELATED ARTISTS: \n";
+                        List<Artist> artists = musixMatchAPI.getArtistsList("",10,"", Methods.ARTIST_RELATED_GET,ID);
+                        String relatedArtistsList = "RELATED ARTISTS: \n";
                         for (Artist a : artists) {
-                            relatedList = relatedList.concat(a.getArtist().getArtistName() + ", \n");
+                            relatedArtistsList = relatedArtistsList.concat(a.getArtist().getArtistName() + ", \n");
                         }
                         //removes the last comma of the concatenation
-                        relatedList = relatedList.substring(0, relatedList.length() - 3);
+                        relatedArtistsList = relatedArtistsList.substring(0, relatedArtistsList.length() - 3);
                         info = FXCollections.observableArrayList((List.of(
-                                relatedList))
+                                relatedArtistsList))
                         );
                     }
                     //Adds the song selected to the Database
@@ -245,22 +245,23 @@ public class SearchController {
         ObservableList<Element> elements = FXCollections.observableArrayList();
         infoBox.setItems(null);
         try {
-            MusixMatchAPI m = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
+            MusixMatchAPI musixMatchAPI = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
             if(searchField.getText().contains("-")){
                 //splits track name and artist name and looks for matches
                 String[] params = searchField.getText().split("-");
                 if((!params[0].isEmpty())&&(!params[1].isEmpty())){
-                    Track l = m.getMatchingTrack(params[0],params[1]);
-                    if(l!=null){
-                        elements.add(new Element(l.getTrack().getTrackId(),l.getTrack().getTrackName(),"track",l.getTrack().getArtistName()));
+                    Track track = musixMatchAPI.getMatchingTrack(params[0],params[1]);
+                    if(track !=null){
+                        elements.add(new Element(track.getTrack().getTrackId(), track.getTrack().getTrackName(),"track", track.getTrack().getArtistName()));
                     }
                 }
             }else{
-                //displays at most 5 artists that matches the research
-                List<Artist> artists = m.searchArtists(searchField.getText(),5);
+                //displays at most 10 artists that matches the research
+                List<Artist> artists = musixMatchAPI.searchArtists(searchField.getText(),10);
                 if(!artists.isEmpty()){
                     elements.add(new Element(artists.get(0).getArtist().getArtistId(),artists.get(0).getArtist().getArtistName(),"artist"));
                     for(Artist a : artists){
+                        //check to insert the same artist name only once because the api call may return the same artist many times for different albums or collaborations.
                         if(!a.getArtist().getArtistName().equals(artists.get(0).getArtist().getArtistName())){
                             elements.add(new Element(a.getArtist().getArtistId(),a.getArtist().getArtistName(),"artist"));
                         }

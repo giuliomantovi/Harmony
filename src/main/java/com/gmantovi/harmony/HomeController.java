@@ -30,6 +30,7 @@ public class HomeController {
 
     @FXML
     public void initialize(){
+        //sets default values for the country combobox
         countryBox.setItems(FXCollections.observableArrayList(
                 "IT","GB","FR","US","DE"));
         countryBox.getSelectionModel().selectFirst();
@@ -66,14 +67,14 @@ public class HomeController {
         labelTitle.setText("Top 10 artists in");
         listView.setStyle("-fx-border-width: 1px");
         try {
-            MusixMatchAPI m = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
+            MusixMatchAPI musixMatchAPI = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
             //use selected country value of the combobox to make the API call
-            List<Artist> l = m.getArtistsList(countryBox.getSelectionModel().getSelectedItem(),10,"top", Methods.CHART_ARTISTS_GET,-1);
+            List<Artist> artistsList = musixMatchAPI.getArtistsList(countryBox.getSelectionModel().getSelectedItem(),10,"top", Methods.CHART_ARTISTS_GET,-1);
             //list of artists' names
-            List<String> artists = l.stream()
+            List<String> namesList = artistsList.stream()
                     .map(artist -> artist.getArtist().getArtistName())
                     .toList();
-            listView.setItems(FXCollections.observableArrayList(artists));
+            listView.setItems(FXCollections.observableArrayList(namesList));
             makeEditable();
         } catch (Exception e){
             listView.setStyle("-fx-background-color: #242325");
@@ -90,14 +91,14 @@ public class HomeController {
         labelTitle.setText("Top 10 songs in");
         listView.setStyle("-fx-border-width: 2px");
         try {
-            MusixMatchAPI m = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
+            MusixMatchAPI musixMatchAPI = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
             //use selected country value of the combobox to make the API call
-            List<Track> l = m.getTracksChart(countryBox.getSelectionModel().getSelectedItem(),10,"top");
+            List<Track> tracksList = musixMatchAPI.getTracksChart(countryBox.getSelectionModel().getSelectedItem(),10,"top");
             //list of tracks names concatenated with the singers names
-            List<String> tracks = l.stream()
+            List<String> namesList = tracksList.stream()
                     .map(t -> t.getTrack().getTrackName() + " - " + t.getTrack().getArtistName())
                     .toList();
-            listView.setItems(FXCollections.observableArrayList(tracks));
+            listView.setItems(FXCollections.observableArrayList(namesList));
             makeEditable();
         } catch (Exception e){
             listView.setStyle("-fx-background-color: #242325");
