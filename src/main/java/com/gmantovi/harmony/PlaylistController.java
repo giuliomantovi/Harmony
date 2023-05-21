@@ -9,6 +9,7 @@
 package com.gmantovi.harmony;
 
 import com.gmantovi.harmony.config.Constants;
+import com.gmantovi.harmony.config.Methods;
 import com.gmantovi.harmony.gsonClasses.album.Album;
 import com.gmantovi.harmony.gsonClasses.artist.Artist;
 import com.gmantovi.harmony.gsonClasses.track.MusicGenreList;
@@ -50,13 +51,13 @@ public class PlaylistController {
         playlistIDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         playlistSingerColumn.setCellValueFactory(new PropertyValueFactory<>("authorName"));
         playlistSongColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        playlistTableView.setItems(getPlaylistData());
+        playlistTableView.setItems(getPlaylistData()); //displays the tracks retrieved in the playlist tableview
         playlistTableView.getSelectionModel().selectedItemProperty().addListener((observable) -> onPlaylistSelected());
         //setting up suggested tableView
         suggestedSongColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         suggestedIDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         suggestedSingerColumn.setCellValueFactory(new PropertyValueFactory<>("authorName"));
-        executeTask();
+        executeTask(); //displays the suggested songs in the playlist tableview
         suggestedTableView.getSelectionModel().selectedItemProperty().addListener((observable) -> onSuggestedSelected());
     }
 
@@ -100,14 +101,13 @@ public class PlaylistController {
         Connection connection = null;
         Statement statement = null;
         try{
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
+            connection = DriverManager.getConnection(Constants.MYSQL_CONNECTION_URL);
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery("SELECT * FROM playlist");
             while(rs.next()) {
                 int id = rs.getInt("IDsong");
                 String song = rs.getString("song");
                 String singer= rs.getString("singer");
-                System.out.println("ID: "+id + "SONG: "+song+" singer"+singer);
                 playlist.add(new Element(id,song,"track,",singer));
             }
         } catch(SQLException e) {
@@ -134,7 +134,9 @@ public class PlaylistController {
     int selectedIndex(TableView<Element> tableView) {
         int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
         if (selectedIndex < 0) {
+            showNoSongSelectedAlert();
             throw new NoSuchElementException();
+
         }
         return selectedIndex;
     }
@@ -151,20 +153,19 @@ public class PlaylistController {
     }
 
     /**
-     * removes selected song from the database playlist and tableview
+     * removes playlist TableView selected song from the database and the tableview itself
      */
     @FXML
     private void handleRemoveSong() {
         try {
             Connection connection;
             int selectedIndex = selectedIndex(playlistTableView);
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
+            connection = DriverManager.getConnection(Constants.MYSQL_CONNECTION_URL);
             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM playlist WHERE IDsong=?");
             preparedStatement.setInt(1, playlistTableView.getItems().get(selectedIndex).getId());
             preparedStatement.executeUpdate();
             playlistTableView.getItems().remove(selectedIndex);
         } catch (NoSuchElementException | SQLException e) {
-            showNoSongSelectedAlert();
             e.printStackTrace();
         }
     }
@@ -183,7 +184,7 @@ public class PlaylistController {
         Statement statement = null;
         try{
             MusixMatchAPI musixMatchAPI = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
+            connection = DriverManager.getConnection(Constants.MYSQL_CONNECTION_URL);
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery("SELECT IDsong FROM playlist");
             //maps containing Name (genres, countries) or ID (singer) as the key and the number of times they
@@ -261,7 +262,7 @@ public class PlaylistController {
                     }
                 }
             }
-            //adding one song of the most frequent artist in the playlist, selecting his most popular song from a random album
+            //adding one song of the most frequent artist in the playlist, selecting the most popular song of a random album
             if(topArtist != null) {
                 List<Album> albumsList = musixMatchAPI.getArtistAlbums(topArtist, 20);
                 if (!albumsList.isEmpty()) {
@@ -275,8 +276,9 @@ public class PlaylistController {
                 }
 
                 //adding song from most popular albums of 2 artists related to the most frequent artist in the playlist
-                List<Artist> relatedArtists = musixMatchAPI.getArtistsList("", 2, "", "get_related_artist", topArtist);
+                List<Artist> relatedArtists = musixMatchAPI.getArtistsList("", 2, "", Methods.ARTIST_RELATED_GET, topArtist);
                 List<Album> relatedAlbums = new ArrayList<>();
+                //adds 1 random album for each of the 2 related artists to the list
                 for (Artist artist : relatedArtists) {
                     List<Album> artistAlbums = musixMatchAPI.getArtistAlbums(artist.getArtist().getArtistId(), 50);
                     if (!artistAlbums.isEmpty()) {
@@ -286,6 +288,7 @@ public class PlaylistController {
                         relatedAlbums.add(artistAlbums.get(random_int));
                     }
                 }
+                //gets a random track for each of the album and adds them to the suggested tracks
                 for (Album album : relatedAlbums) {
                     List<Track> albumTracks = musixMatchAPI.getAlbumTracks(album.getAlbum().getAlbumId(), 30);
                     if (!albumTracks.isEmpty()) {
@@ -296,12 +299,11 @@ public class PlaylistController {
                     }
                 }
             }
-
+            //populates the observable list of elements, converting Track instances into Element
             for(Track t : suggestedTracks){
                 suggested.add(new Element(t.getTrack().getTrackId(),t.getTrack().getTrackName(),"track",t.getTrack().getArtistName()));
             }
         } catch(Exception e) {
-
             e.printStackTrace();
         } finally {
             if (connection != null) {
@@ -313,19 +315,22 @@ public class PlaylistController {
         return suggested;
     }
 
-
-
+    /**
+     * Adds a song selected from the suggestions table view to the database and to the playlist table view
+     * @throws SQLException if connection to mysql database fails
+     */
     @FXML
     private void handleAddSong() throws SQLException {
+        int selectedIndex = selectedIndex(suggestedTableView);
         Integer ID = suggestedTableView.getSelectionModel().getSelectedItem().getId();
         String song = suggestedTableView.getSelectionModel().getSelectedItem().getName();
         String singer = suggestedTableView.getSelectionModel().getSelectedItem().getAuthorName();
-        int selectedIndex = selectedIndex(suggestedTableView);
         Connection connection = null;
         Statement statement = null;
         try {
-                connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
+                connection = DriverManager.getConnection(Constants.MYSQL_CONNECTION_URL);
                 statement = connection.createStatement();
+                //Assuring that the song isn't already present in the playlist checking all the song IDs
                 ResultSet rs = statement.executeQuery("SELECT IDsong FROM playlist");
                 boolean present = false;
                 while(rs.next()) {
@@ -340,7 +345,7 @@ public class PlaylistController {
                     insertPlaylist.setString(2,song);
                     insertPlaylist.setString(3, singer);
                     insertPlaylist.executeUpdate();
-                    new Alert(Alert.AlertType.CONFIRMATION, "The song has been successfully added to the playlist").showAndWait();
+                    new Alert(Alert.AlertType.INFORMATION, "The song has been successfully added to the playlist").showAndWait();
                     playlistTableView.getItems().add(suggestedTableView.getItems().get(selectedIndex));
                 }else{
                     new Alert(Alert.AlertType.WARNING, "The song is already in your playlist").showAndWait();

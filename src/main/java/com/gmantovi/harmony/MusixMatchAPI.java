@@ -187,10 +187,10 @@ public class MusixMatchAPI {
         ArtistSearchMessage message = null;
         Map<String, Object> params = new HashMap<>();
         String methodParam;
-
         params.put(Constants.API_KEY, apiKey);
         params.put(Constants.PAGE_SIZE, page_size);
-        if(method.equals("get_artists_chart")){
+
+        if(method.equals(Methods.CHART_ARTISTS_GET)){
             params.put(Constants.CHART_NAME, chart_name);
             params.put(Constants.COUNTRY, country);
             methodParam = Methods.CHART_ARTISTS_GET;

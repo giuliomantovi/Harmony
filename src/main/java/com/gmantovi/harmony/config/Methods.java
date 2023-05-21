@@ -14,8 +14,7 @@ package com.gmantovi.harmony.config;
  */
 public class Methods {
     /**
-     * Get an album from our database: name, release_date, release_type, cover
-     * art.
+     * Get an album from MusixMatch API database
      */
     public static final String ALBUM_GET = "album.get";
 
@@ -30,12 +29,12 @@ public class Methods {
     public static final String ARTIST_ALBUMS_GET = "artist.albums.get";
 
     /**
-     * This api provides you the list of the top artists of a given country.
+     * This api method provides you the list of the top artists of a given country.
      */
     public static final String CHART_ARTISTS_GET = "chart.artists.get";
 
     /**
-     * Get the artist data from our database.
+     * Get the artist data from MusixMatch API database.
      */
     public static final String ARTIST_GET = "artist.get";
 
@@ -44,14 +43,13 @@ public class Methods {
      */
     public static final String ARTIST_RELATED_GET = "artist.related.get";
 
-
     /**
-     * Search for artists in our database.
+     * Search for artists in MusixMatch API database.
      */
     public static final String ARTIST_SEARCH = "artist.search";
 
     /**
-     * Match your track against our database.
+     * Match your track against MusixMatch API database.
      */
     public static final String MATCHER_TRACK_GET = "matcher.track.get";
 
@@ -62,14 +60,13 @@ public class Methods {
     public static final String TRACKING_URL_GET = "tracking.url.get";
 
     /**
-     * This api provides you the list of the top tracks of the supported
+     * This api method provides you the list of the top tracks of the supported
      * countries.
      */
     public static final String CHART_TRACKS_GET = "chart.tracks.get";
 
     /**
-     * Get a track info from our database: title, artist, instrumental flag and
-     * cover art.
+     * Get a track info from MusixMatch API database:
      */
     public static final String TRACK_GET = "track.get";
 

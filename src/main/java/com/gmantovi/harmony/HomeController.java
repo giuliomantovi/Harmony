@@ -9,6 +9,7 @@
 package com.gmantovi.harmony;
 
 import com.gmantovi.harmony.config.Constants;
+import com.gmantovi.harmony.config.Methods;
 import com.gmantovi.harmony.gsonClasses.artist.Artist;
 import com.gmantovi.harmony.gsonClasses.track.Track;
 import javafx.collections.FXCollections;
@@ -24,7 +25,7 @@ import java.util.List;
  */
 public class HomeController {
     @FXML private ListView<String> listView;
-    @FXML private Label listTitle;
+    @FXML private Label labelTitle;
     @FXML private ComboBox<String> countryBox;
 
     @FXML
@@ -34,16 +35,22 @@ public class HomeController {
         countryBox.getSelectionModel().selectFirst();
     }
 
+    /**
+     * Updates the top artists/tracks listview when the country combobox is updated
+     */
     @FXML
     public void onCountryUpdate(){
-        if (listTitle.getText().equals("Top 10 artists in")) {
+        if (labelTitle.getText().equals("Top 10 artists in")) {
             showTopArtists();
         }
-        if(listTitle.getText().equals("Top 10 songs in")){
+        if(labelTitle.getText().equals("Top 10 songs in")){
             showTopSongs();
         }
     }
 
+    /**
+     * Makes the top artists/tracks listview editable
+     */
     private void makeEditable() {
         if(!listView.getItems().isEmpty()) {
             listView.setEditable(true);
@@ -51,13 +58,18 @@ public class HomeController {
         }
     }
 
+    /**
+     * Retrieves top 10 artists of the selected country from the API and displays them in the listview
+     */
     @FXML
     public void showTopArtists(){
-        listTitle.setText("Top 10 artists in");
+        labelTitle.setText("Top 10 artists in");
         listView.setStyle("-fx-border-width: 1px");
         try {
             MusixMatchAPI m = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
-            List<Artist> l = m.getArtistsList(countryBox.getSelectionModel().getSelectedItem(),10,"top","get_artists_chart",-1);
+            //use selected country value of the combobox to make the API call
+            List<Artist> l = m.getArtistsList(countryBox.getSelectionModel().getSelectedItem(),10,"top", Methods.CHART_ARTISTS_GET,-1);
+            //list of artists' names
             List<String> artists = l.stream()
                     .map(artist -> artist.getArtist().getArtistName())
                     .toList();
@@ -70,13 +82,18 @@ public class HomeController {
         }
     }
 
+    /**
+     * Retrieves top 10 songs of the selected country from the API and displays them in the listview
+     */
     @FXML
     public void showTopSongs(){
-        listTitle.setText("Top 10 songs in");
+        labelTitle.setText("Top 10 songs in");
         listView.setStyle("-fx-border-width: 2px");
         try {
             MusixMatchAPI m = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
+            //use selected country value of the combobox to make the API call
             List<Track> l = m.getTracksChart(countryBox.getSelectionModel().getSelectedItem(),10,"top");
+            //list of tracks names concatenated with the singers names
             List<String> tracks = l.stream()
                     .map(t -> t.getTrack().getTrackName() + " - " + t.getTrack().getArtistName())
                     .toList();

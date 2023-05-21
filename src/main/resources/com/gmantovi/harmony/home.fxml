@@ -48,7 +48,7 @@
          </children>
       </GridPane>
       <ListView fx:id="listView" layoutX="316.0" layoutY="37.0" prefHeight="335.0" prefWidth="234.0" style="-fx-background-color: #242325;" stylesheets="@styles/homeListView.css" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="300.6" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="55.0" />
-      <Label fx:id="listTitle" alignment="CENTER" layoutX="301.0" layoutY="19.0" prefHeight="27.0" prefWidth="146.0" text="No selection" textFill="WHITE" AnchorPane.leftAnchor="299.6" AnchorPane.topAnchor="19.0">
+      <Label fx:id="labelTitle" alignment="CENTER" layoutX="301.0" layoutY="19.0" prefHeight="27.0" prefWidth="146.0" text="No selection" textFill="WHITE" AnchorPane.leftAnchor="299.6" AnchorPane.topAnchor="19.0">
          <font>
             <Font size="18.0" />
          </font>

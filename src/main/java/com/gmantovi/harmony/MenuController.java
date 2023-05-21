@@ -28,23 +28,33 @@ public class MenuController {
     public void initialize(){
     }
 
+    /**
+     * Updates the borderPane center when the Home menu button is clicked
+     * @throws IOException if resources fails to load
+     */
     @FXML
     public void switchToHome() throws IOException {
         Parent center = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("home.fxml")));
         borderPane.setCenter(center);
     }
 
+    /**
+     * Updates the borderPane center when the search menu button is clicked
+     * @throws IOException if resources fails to load
+     */
     @FXML
     public void switchToSearch() throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("search.fxml")));
         borderPane.setCenter(root);
     }
 
+    /**
+     * Updates the borderPane center when the playlist menu button is clicked
+     * @throws IOException if resources fails to load
+     */
     @FXML
     public void switchToPlaylist() throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("playlist.fxml")));
         borderPane.setCenter(root);
     }
-
-
 }

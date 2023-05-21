@@ -14,9 +14,15 @@ package com.gmantovi.harmony.config;
  */
 public final class Constants {
     /**
+     * A constant field to denote the value of the url to connect to my local mysql database.
+     */
+    public static final String MYSQL_CONNECTION_URL = "jdbc:mysql://localhost/harmony?user=root&password=";
+
+    /**
      * A constant field to denote the value of my personal APIKEY.
      */
     public static final String PERSONAL_API_KEY = "391689594f1ad1d992b2efd5fc5862ef";
+
     /**
      * A constant field to denote the value of API_KEY in the KV mapping.
      */
