@@ -37,6 +37,8 @@ import java.util.NoSuchElementException;
 
 /**
  * Class for getting all the music data needed from the API
+ * @author Giulio Mantovi
+ * @version 2023.05.21
  */
 public class MusixMatchAPI {
     /**

@@ -19,6 +19,8 @@ import javafx.stage.Stage;
 import java.util.Objects;
 /**
  * Launcher Class for the application
+ * @author Giulio Mantovi
+ * @version 2023.05.21
  */
 public class HarmonyApplication extends Application{
     public static void main(String[] args) {

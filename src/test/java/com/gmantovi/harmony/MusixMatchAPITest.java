@@ -1,12 +1,67 @@
+/*
+ *GNU GENERAL PUBLIC LICENSE
+ *Version 3, 29 June 2007
+ *
+ * Copyright (C) 2007 by Giulio Mantovi
+ * Everyone is permitted to copy and distribute verbatim copies
+ * of this license document, but changing it is not allowed.
+ */
 package com.gmantovi.harmony;
 
+import com.gmantovi.harmony.MusixMatchAPI;
+import com.gmantovi.harmony.config.Constants;
+import com.gmantovi.harmony.gsonClasses.lyrics.Lyrics;
 import com.gmantovi.harmony.gsonClasses.track.Track;
+import com.gmantovi.harmony.gsonClasses.track.TrackData;
+import org.junit.Ignore;
+import org.junit.jupiter.api.Test;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.List;
+/**
+ * Test class for checking the integrity of the API calls
+ * @author Giulio Mantovi
+ * @version 2023.05.21
+ */
+public class MusixMatchAPITest {
 
-public class HomePageController {
-    public static void main(String[] args) throws SQLException {
+    @Test
+    //@Ignore
+    public void testAPI() throws Exception{
+
+        MusixMatchAPI musixMatch = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
+
+        String trackName = "Don't stop the Party";
+        String artistName = "The Black Eyed Peas";
+
+        // Track Search [ Fuzzy ]
+        Track track = musixMatch.getMatchingTrack(trackName, artistName);
+        TrackData data = track.getTrack();
+        assert data != null;
+        System.out.println("AlbumID : " + data.getAlbumId());
+        System.out.println("Album Name : " + data.getAlbumName());
+        System.out.println("Artist ID : " + data.getArtistId());
+        System.out.println("Album Name : " + data.getArtistName());
+        System.out.println("Track ID : " + data.getTrackId());
+
+        int trackID = data.getTrackId();
+
+        Lyrics lyrics = musixMatch.getLyrics(trackID);
+        assert lyrics != null;
+        System.out.println("Lyrics ID       : " + lyrics.getLyricsId());
+        System.out.println("Lyrics Language : " + lyrics.getLyricsLang());
+        System.out.println("Lyrics Body     : " + lyrics.getLyricsBody());
+        System.out.println("Script-Tracking-URL : " + lyrics.getScriptTrackingURL());
+        System.out.println("Pixel-Tracking-URL : " + lyrics.getPixelTrackingURL());
+        System.out.println("Lyrics Copyright : " + lyrics.getLyricsCopyright());
+
+        List<Track> chartTracks = musixMatch.getTracksChart("it",10,"top");
+        for(Track t : chartTracks){
+            System.out.println("TRACK: " + t.getTrack().getTrackName());
+        }
         /*
         Chiamata per il TESTO di una TRACK DATO ID
         MusixMatchAPI m = new MusixMatchAPI("391689594f1ad1d992b2efd5fc5862ef");
@@ -52,7 +107,7 @@ public class HomePageController {
         MusixMatchAPI m = new MusixMatchAPI("391689594f1ad1d992b2efd5fc5862ef");
         List<Track> l = m.getAlbumTracks(54605501,5);
         System.out.println("LISTA CANZONI = " + l.get(0).getTrack().getTrackName() );
-         */
+
         try {
             MusixMatchAPI m = new MusixMatchAPI("391689594f1ad1d992b2efd5fc5862ef");
             List<Track> l = m.getTracksChart("it",5,"top");
@@ -63,30 +118,32 @@ public class HomePageController {
             e.printStackTrace();
         }
 
-        /*Connection connection = null;
+        //DB CONNECTION TEST
+        Connection connection = null;
         Statement statement = null;
+
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=giulio");
             statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT * FROM client");
+            assert statement != null;
+            /*ResultSet rs = statement.executeQuery("SELECT * FROM playlist");
             while(rs.next()) {
-                int id = rs.getInt("idclient");
-                String name = rs.getString("name");
-                String surname= rs.getString("surname");
-                System.out.println("CLIENTE: " + id + " " + name + " " + surname);
+                int id = rs.getInt("IDsong");
+                String song = rs.getString("song");
+                String singer= rs.getString("singer");
+                System.out.println("SONG: " + id + " " + song + " " + singer);
             }
         } catch(Exception e) {
             e.printStackTrace();
         } finally {
             if (connection != null) {
+                assert statement != null;
                 statement.close();
                 connection.close();
             }
         }*/
 
 
-
-
-}
+    }
 }

@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.util.Objects;
 /**
  * Controller for displaying menu and related sections
+ * @author Giulio Mantovi
+ * @version 2023.05.21
  */
 public class MenuController {
     @FXML private BorderPane borderPane;

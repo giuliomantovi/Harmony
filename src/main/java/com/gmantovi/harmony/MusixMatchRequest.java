@@ -9,26 +9,26 @@
 
 package com.gmantovi.harmony;
 
+import com.gmantovi.harmony.config.Constants;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.cert.CertificateParsingException;
 import java.util.Map;
 
 /**
  * Class for building the URL request and sending it
+ * @author Giulio Mantovi
+ * @version 2023.05.21
  */
 public class MusixMatchRequest {
 
     /**
-     * API url, last 2 digits represent the version number.
-     */
-    public static final String API_URL = "https://api.musixmatch.com/ws/1.1/";
-
-    /**
-     * This method is used to get json responses from the API
+     * This method is used to get the json response from the API
      *
      * @param requestString
      *            String containing API method name and call parameters, properly formatted for the URL
@@ -37,7 +37,7 @@ public class MusixMatchRequest {
     public static String sendRequest(String requestString) {
         StringBuilder buffer = new StringBuilder();
         try {
-            String apiUrl = API_URL + requestString;
+            String apiUrl = Constants.API_URL + Constants.API_VERSION + Constants.URL_DELIM + requestString;
             URL url = new URL(apiUrl);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(

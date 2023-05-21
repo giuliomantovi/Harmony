@@ -19,6 +19,8 @@ import javafx.scene.control.cell.TextFieldListCell;
 import java.util.List;
 /**
  * Controller for the home/first section of the menu
+ * @author Giulio Mantovi
+ * @version 2023.05.21
  */
 public class HomeController {
     @FXML private ListView<String> listView;

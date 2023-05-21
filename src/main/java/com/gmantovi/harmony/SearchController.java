@@ -27,6 +27,8 @@ import java.sql.*;
 import java.util.List;
 /**
  * Controller for the search/second section of the menu
+ * @author Giulio Mantovi
+ * @version 2023.05.21
  */
 public class SearchController {
     @FXML private ListView<String> listView;

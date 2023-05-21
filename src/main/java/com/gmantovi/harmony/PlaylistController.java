@@ -28,6 +28,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 /**
  * Controller for the playlist/third section of the menu
+ * @author Giulio Mantovi
+ * @version 2023.05.21
  */
 public class PlaylistController {
 
@@ -44,26 +46,37 @@ public class PlaylistController {
 
     @FXML
     public void initialize() throws SQLException {
+        //setting up playlist tableView
         playlistIDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         playlistSingerColumn.setCellValueFactory(new PropertyValueFactory<>("authorName"));
         playlistSongColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         playlistTableView.setItems(getPlaylistData());
+        playlistTableView.getSelectionModel().selectedItemProperty().addListener((observable) -> onPlaylistSelected());
+        //setting up suggested tableView
         suggestedSongColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         suggestedIDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         suggestedSingerColumn.setCellValueFactory(new PropertyValueFactory<>("authorName"));
         executeTask();
-        playlistTableView.getSelectionModel().selectedItemProperty().addListener((observable) -> onPlaylistSelected());
         suggestedTableView.getSelectionModel().selectedItemProperty().addListener((observable) -> onSuggestedSelected());
     }
 
+    /**
+     * Enables addButton after selecting an item
+     */
     private void onSuggestedSelected() {
         addButton.setDisable(false);
     }
 
+    /**
+     * Enables removeButton after selecting an item
+     */
     private void onPlaylistSelected() {
         removeButton.setDisable(false);
     }
 
+    /**
+     * Creates a task for computing suggested songs and putting them in the tableview
+     */
     private void executeTask (){
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         executor.submit(() -> {
@@ -77,141 +90,11 @@ public class PlaylistController {
         });
     }
 
-    private ObservableList<Element> getSuggestedData() throws SQLException {
-        if (playlistTableView.getItems().isEmpty()) return null;
-        ObservableList<Element> suggested =FXCollections.observableArrayList();
-        Connection connection = null;
-        Statement statement = null;
-        try{
-            MusixMatchAPI m = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
-            statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT IDsong FROM playlist");
-            HashMap<String,Integer> genresOccurrences = new HashMap<>();
-            HashMap<Integer,Integer> singersOccurrences = new HashMap<>();
-            HashMap<String,Integer> countriesOccurrences = new HashMap<>();
-
-            while(rs.next()) {
-                int id = rs.getInt("IDsong");
-                Track track = m.getTrack(id);
-                //getting genres, singers and countries occurences in the playlist
-                List<MusicGenreList> genre = track.getTrack().getPrimaryGenres().getMusicGenreList();
-                if(!genre.isEmpty()){
-                    String genreName = genre.get(0).getMusicGenre().getMusicGenreName();
-                    if(genresOccurrences.containsKey(genreName)){
-                        genresOccurrences.put(genreName, genresOccurrences.get(genreName) + 1);
-                    }else{
-                        genresOccurrences.put(genreName,1);
-                    }
-                }
-
-                Integer singer = track.getTrack().getArtistId();
-                if(singer != null){
-                    if(singersOccurrences.containsKey(singer)){
-                        singersOccurrences.put(singer, singersOccurrences.get(singer) + 1);
-                    }else{
-                        singersOccurrences.put(singer,1);
-                    }
-                }
-
-                String country = m.getArtist(track.getTrack().getArtistId()).getArtist().getArtistCountry();
-                if(country != null && !country.equals("")){
-                    if(countriesOccurrences.containsKey(country)){
-                        countriesOccurrences.put(country, countriesOccurrences.get(country) + 1);
-                    }else{
-                        countriesOccurrences.put(country,1);
-                    }
-                }
-            }
-            //getting most frequent artist, genre and country in the user playlist
-            Integer topArtist;
-            String topGenre;
-            String topCountry;
-            if(!singersOccurrences.isEmpty()) {
-                topArtist = Collections.max(singersOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey();
-            } else {
-                topArtist = null;
-            }
-            if(!genresOccurrences.isEmpty()) {
-                topGenre = Collections.max(genresOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey();
-            } else {
-                topGenre = null;
-            }
-            if(!countriesOccurrences.isEmpty()) {
-                topCountry = Collections.max(countriesOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey();
-            }else{
-                topCountry=null;
-            }
-
-            System.out.printf("TOP ARTISTI: " + topArtist + " TOP GENRE: " + topGenre + " TOP COUNTRY: " + topCountry);
-            List<Track> suggestedTracks = new ArrayList<>();
-            if(topCountry != null){
-                //adding at most 3 suggested tracks selecting them from the top 50 songs from the most frequent country on the playlist
-                List<Track> topTracks = m.getTracksChart(topCountry,50,"top");
-                for(Track t: topTracks){
-                    List<MusicGenreList> genresList = t.getTrack().getPrimaryGenres().getMusicGenreList();
-                    if(!genresList.isEmpty()&&genresList.get(0).getMusicGenre().getMusicGenreName().equals(topGenre)){
-                        if(suggestedTracks.size()<3){
-                            suggestedTracks.add(t);
-                        }else{
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if(topArtist != null) {
-                //adding one song of the most frequent artist in the playlist
-                List<Album> albumsList = m.getArtistAlbums(topArtist, 20);
-                if (!albumsList.isEmpty()) {
-                    int min = 0;
-                    int max = albumsList.size() - 1;
-                    int random_int = (int) Math.floor(Math.random() * (max - min + 1) + min);
-                    Album randomAlbum = albumsList.get(random_int);
-                    List<Track> albumTracks = m.getAlbumTracks(randomAlbum.getAlbum().getAlbumId(), 50);
-                    Track bestTrack = Collections.max(albumTracks, Comparator.comparingInt(o -> o.getTrack().getTrackRating()));
-                    suggestedTracks.add(bestTrack);
-                }
-
-                //adding song from most popular albums of 2 artists related to the most frequent artist in the playlist
-                List<Artist> relatedArtists = m.getArtistsList("", 2, "", "get_related_artist", topArtist);
-                List<Album> relatedAlbums = new ArrayList<>();
-                for (Artist artist : relatedArtists) {
-                    List<Album> artistAlbums = m.getArtistAlbums(artist.getArtist().getArtistId(), 50);
-                    if (!artistAlbums.isEmpty()) {
-                        int min = 0;
-                        int max = artistAlbums.size() - 1;
-                        int random_int = (int) Math.floor(Math.random() * (max - min + 1) + min);
-                        relatedAlbums.add(artistAlbums.get(random_int));
-                    }
-                }
-                for (Album album : relatedAlbums) {
-                    List<Track> albumTracks = m.getAlbumTracks(album.getAlbum().getAlbumId(), 30);
-                    if (!albumTracks.isEmpty()) {
-                        int min = 0;
-                        int max = albumTracks.size() - 1;
-                        int random_int = (int) Math.floor(Math.random() * (max - min + 1) + min);
-                        suggestedTracks.add(albumTracks.get(random_int));
-                    }
-                }
-            }
-
-            for(Track t : suggestedTracks){
-                suggested.add(new Element(t.getTrack().getTrackId(),t.getTrack().getTrackName(),"track",t.getTrack().getArtistName()));
-            }
-        } catch(Exception e) {
-
-            e.printStackTrace();
-        } finally {
-            if (connection != null) {
-                assert statement != null;
-                statement.close();
-                connection.close();
-            }
-        }
-        return suggested;
-    }
-
+    /**
+     * Retrieves all the songs of the playlist from mysql database
+     * @throws SQLException if connection to the mysql database fails
+     * @return an observable list of Elements containing the playlist tracks
+     */
     private ObservableList<Element> getPlaylistData() throws SQLException {
         ObservableList<Element> playlist =FXCollections.observableArrayList();
         Connection connection = null;
@@ -245,7 +128,8 @@ public class PlaylistController {
 
     /**
      * Returns the index of the selected song in the TableView component
-     * @return the index of the selected song
+     * @param tableView is the TableView to get the index from
+     * @return an integer that defines one Element of the tableview
      */
     int selectedIndex(TableView<Element> tableView) {
         int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
@@ -266,21 +150,170 @@ public class PlaylistController {
         alert.showAndWait();
     }
 
+    /**
+     * removes selected song from the database playlist and tableview
+     */
     @FXML
     private void handleRemoveSong() {
         try {
             Connection connection;
             int selectedIndex = selectedIndex(playlistTableView);
             connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
-            PreparedStatement deleteSong = connection.prepareStatement("DELETE FROM playlist WHERE IDsong=?");
-            deleteSong.setInt(1, playlistTableView.getItems().get(selectedIndex).getId());
-            deleteSong.executeUpdate();
+            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM playlist WHERE IDsong=?");
+            preparedStatement.setInt(1, playlistTableView.getItems().get(selectedIndex).getId());
+            preparedStatement.executeUpdate();
             playlistTableView.getItems().remove(selectedIndex);
         } catch (NoSuchElementException | SQLException e) {
             showNoSongSelectedAlert();
             e.printStackTrace();
         }
     }
+
+    /**
+     * searches for track suggestions by finding attributes in common with songs in the playlist
+     * @return an Observable List of Element containing the suggested tracks
+     * @throws SQLException if connection to mysql database fails
+     */
+    private ObservableList<Element> getSuggestedData() throws SQLException {
+
+        if (playlistTableView.getItems().isEmpty()) return null;
+        //final list to return
+        ObservableList<Element> suggested =FXCollections.observableArrayList();
+        Connection connection = null;
+        Statement statement = null;
+        try{
+            MusixMatchAPI musixMatchAPI = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
+            connection = DriverManager.getConnection("jdbc:mysql://localhost/harmony?user=root&password=");
+            statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery("SELECT IDsong FROM playlist");
+            //maps containing Name (genres, countries) or ID (singer) as the key and the number of times they
+            // appear in the playlist as the value
+            HashMap<String,Integer> genresOccurrences = new HashMap<>();
+            HashMap<Integer,Integer> singersOccurrences = new HashMap<>();
+            HashMap<String,Integer> countriesOccurrences = new HashMap<>();
+
+            while(rs.next()) {
+                int id = rs.getInt("IDsong");
+                Track track = musixMatchAPI.getTrack(id);
+                //counting genres occurences of the playlist
+                List<MusicGenreList> genre = track.getTrack().getPrimaryGenres().getMusicGenreList();
+                if(!genre.isEmpty()){
+                    String genreName = genre.get(0).getMusicGenre().getMusicGenreName();
+                    if(genresOccurrences.containsKey(genreName)){
+                        genresOccurrences.put(genreName, genresOccurrences.get(genreName) + 1);
+                    }else{
+                        genresOccurrences.put(genreName,1);
+                    }
+                }
+                //counting singers occurences of the playlist
+                Integer singer = track.getTrack().getArtistId();
+                if(singer != null){
+                    if(singersOccurrences.containsKey(singer)){
+                        singersOccurrences.put(singer, singersOccurrences.get(singer) + 1);
+                    }else{
+                        singersOccurrences.put(singer,1);
+                    }
+                }
+                //counting countries occurences of the playlist
+                String country = musixMatchAPI.getArtist(track.getTrack().getArtistId()).getArtist().getArtistCountry();
+                if(country != null && !country.equals("")){
+                    if(countriesOccurrences.containsKey(country)){
+                        countriesOccurrences.put(country, countriesOccurrences.get(country) + 1);
+                    }else{
+                        countriesOccurrences.put(country,1);
+                    }
+                }
+            }
+            //getting most frequent artist in the user playlist
+            Integer topArtist;
+            String topGenre;
+            String topCountry;
+            if(!singersOccurrences.isEmpty()) {
+                topArtist = Collections.max(singersOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey();
+            } else {
+                topArtist = null;
+            }
+            //getting most frequent genre in the user playlist
+            if(!genresOccurrences.isEmpty()) {
+                topGenre = Collections.max(genresOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey();
+            } else {
+                topGenre = null;
+            }
+            //getting most frequent country in the user playlist
+            if(!countriesOccurrences.isEmpty()) {
+                topCountry = Collections.max(countriesOccurrences.entrySet(), Map.Entry.comparingByValue()).getKey();
+            }else{
+                topCountry=null;
+            }
+
+            List<Track> suggestedTracks = new ArrayList<>();
+            //adding at most 3 suggested tracks selecting them from the top 50 songs from the most frequent country on the playlist
+            if(topCountry != null){
+                List<Track> topTracks = musixMatchAPI.getTracksChart(topCountry,50,"top");
+                for(Track t: topTracks){
+                    List<MusicGenreList> genresList = t.getTrack().getPrimaryGenres().getMusicGenreList();
+                    if(!genresList.isEmpty()&&genresList.get(0).getMusicGenre().getMusicGenreName().equals(topGenre)){
+                        if(suggestedTracks.size()<3){
+                            suggestedTracks.add(t);
+                        }else{
+                            break;
+                        }
+                    }
+                }
+            }
+            //adding one song of the most frequent artist in the playlist, selecting his most popular song from a random album
+            if(topArtist != null) {
+                List<Album> albumsList = musixMatchAPI.getArtistAlbums(topArtist, 20);
+                if (!albumsList.isEmpty()) {
+                    int min = 0;
+                    int max = albumsList.size() - 1;
+                    int random_int = (int) Math.floor(Math.random() * (max - min + 1) + min);
+                    Album randomAlbum = albumsList.get(random_int);
+                    List<Track> albumTracks = musixMatchAPI.getAlbumTracks(randomAlbum.getAlbum().getAlbumId(), 50);
+                    Track bestTrack = Collections.max(albumTracks, Comparator.comparingInt(o -> o.getTrack().getTrackRating()));
+                    suggestedTracks.add(bestTrack);
+                }
+
+                //adding song from most popular albums of 2 artists related to the most frequent artist in the playlist
+                List<Artist> relatedArtists = musixMatchAPI.getArtistsList("", 2, "", "get_related_artist", topArtist);
+                List<Album> relatedAlbums = new ArrayList<>();
+                for (Artist artist : relatedArtists) {
+                    List<Album> artistAlbums = musixMatchAPI.getArtistAlbums(artist.getArtist().getArtistId(), 50);
+                    if (!artistAlbums.isEmpty()) {
+                        int min = 0;
+                        int max = artistAlbums.size() - 1;
+                        int random_int = (int) Math.floor(Math.random() * (max - min + 1) + min);
+                        relatedAlbums.add(artistAlbums.get(random_int));
+                    }
+                }
+                for (Album album : relatedAlbums) {
+                    List<Track> albumTracks = musixMatchAPI.getAlbumTracks(album.getAlbum().getAlbumId(), 30);
+                    if (!albumTracks.isEmpty()) {
+                        int min = 0;
+                        int max = albumTracks.size() - 1;
+                        int random_int = (int) Math.floor(Math.random() * (max - min + 1) + min);
+                        suggestedTracks.add(albumTracks.get(random_int));
+                    }
+                }
+            }
+
+            for(Track t : suggestedTracks){
+                suggested.add(new Element(t.getTrack().getTrackId(),t.getTrack().getTrackName(),"track",t.getTrack().getArtistName()));
+            }
+        } catch(Exception e) {
+
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                assert statement != null;
+                statement.close();
+                connection.close();
+            }
+        }
+        return suggested;
+    }
+
+
 
     @FXML
     private void handleAddSong() throws SQLException {
