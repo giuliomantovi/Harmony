@@ -83,7 +83,7 @@ public class PlaylistController {
         executor.submit(() -> {
             try {
                 suggestedTableView.setItems(getSuggestedData());
-                if (suggestedTableView.getItems().isEmpty()) new Alert(Alert.AlertType.ERROR, "Couldn't establish connection").showAndWait();
+                if (suggestedTableView.getItems().isEmpty()) new Alert(Alert.AlertType.ERROR, "Couldn't find suggestions").showAndWait();
             } catch (SQLException e) {
                 e.printStackTrace();
                 new Alert(Alert.AlertType.ERROR, "Couldn't find suggestions").showAndWait();
