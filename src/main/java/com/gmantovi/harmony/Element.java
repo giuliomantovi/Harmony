@@ -8,6 +8,8 @@
  */
 package com.gmantovi.harmony;
 
+import java.util.Objects;
+
 /**
  * Element representing a track or an artist in the GUI components
  * @author Giulio Mantovi
@@ -72,5 +74,18 @@ public class Element {
 
     public void setAuthorName(String authorName) {
         this.authorName = authorName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Element element = (Element) o;
+        return id.equals(element.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

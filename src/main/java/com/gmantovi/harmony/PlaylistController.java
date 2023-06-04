@@ -299,9 +299,13 @@ public class PlaylistController {
                     }
                 }
             }
-            //populates the observable list of elements, converting Track instances into Element
+            //populates the observable list of elements, converting Track instances into Element and assuring there are no duplicates
             for(Track t : suggestedTracks){
-                suggested.add(new Element(t.getTrack().getTrackId(),t.getTrack().getTrackName(),"track",t.getTrack().getArtistName()));
+                Element element = new Element(t.getTrack().getTrackId(),t.getTrack().getTrackName(),"track",t.getTrack().getArtistName());
+                //contains here refers to overriden equals method in Element class to assure the same Element ID can't appear twice between the tables
+                if(!suggested.contains(element)&&!playlistTableView.getItems().contains(element)) {
+                    suggested.add(element);
+                }
             }
         } catch(Exception e) {
             new Alert(Alert.AlertType.WARNING, "Couldn't find suggestions").showAndWait();
