@@ -32,8 +32,8 @@
       <TableView fx:id="suggestedTableView" layoutX="271.0" layoutY="62.0" style="-fx-background-color: #242325;" stylesheets="@styles/TableView.css" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="270.6" AnchorPane.rightAnchor="26.0" AnchorPane.topAnchor="60.0">
          <columns>
             <TableColumn fx:id="suggestedIDColumn" minWidth="0.0" prefWidth="0.0" text="ID" visible="false" />
-            <TableColumn fx:id="suggestedSongColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="116.79998934268951" text="Song" />
-            <TableColumn fx:id="suggestedSingerColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="108.80001678466795" prefWidth="108.80001678466795" text="Singer" />
+            <TableColumn fx:id="suggestedSongColumn" editable="false" prefWidth="118.40002596378326" text="Song" />
+            <TableColumn fx:id="suggestedSingerColumn" editable="false" prefWidth="106.39995574951172" text="Singer" />
          </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
