@@ -24,7 +24,7 @@ import java.util.List;
  * @author Giulio Mantovi
  * @version 2023.05.21
  */
-public class HomeController {
+public class HomeController implements Controller {
     @FXML private ListView<String> listView;
     @FXML private Label labelTitle;
     @FXML private ComboBox<String> countryBox;

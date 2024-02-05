@@ -33,7 +33,7 @@ import java.util.List;
  * @author Giulio Mantovi
  * @version 2023.05.21
  */
-public class SearchController {
+public class SearchController implements Controller {
     @FXML private ListView<String> listView;
     @FXML private TextField searchField;
     @FXML private TableView<MusicElement> tableView;

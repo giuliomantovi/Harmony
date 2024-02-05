@@ -8,6 +8,7 @@
  */
 package com.gmantovi.harmony;
 
+import com.gmantovi.harmony.controllers.Controller;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,7 +22,7 @@ import java.util.Objects;
  * @author Giulio Mantovi
  * @version 2023.05.21
  */
-public class MenuController {
+public class MenuController implements Controller {
     @FXML private BorderPane borderPane;
 
     @FXML

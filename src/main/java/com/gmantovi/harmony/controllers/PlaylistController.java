@@ -34,7 +34,7 @@ import java.util.concurrent.Executors;
  * @author Giulio Mantovi
  * @version 2023.05.21
  */
-public class PlaylistController {
+public class PlaylistController implements Controller {
 
     @FXML private Button addButton;
     @FXML private TableColumn<MusicElement, String> playlistIDColumn;
@@ -48,12 +48,12 @@ public class PlaylistController {
     @FXML private TableView<MusicElement> suggestedTableView;
 
     @FXML
-    public void initialize() throws SQLException {
+    public void initialize() {
         //setting up playlist tableView
         playlistIDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         playlistSingerColumn.setCellValueFactory(new PropertyValueFactory<>("authorName"));
         playlistSongColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        playlistTableView.setItems(getPlaylistData()); //displays the tracks retrieved in the playlist tableview
+        try{playlistTableView.setItems(getPlaylistData());}catch(SQLException e){e.printStackTrace();} //displays the tracks retrieved in the playlist tableview
         playlistTableView.getSelectionModel().selectedItemProperty().addListener((observable) -> onPlaylistSelected());
         //setting up suggested tableView
         suggestedSongColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
