@@ -6,7 +6,7 @@
  * Everyone is permitted to copy and distribute verbatim copies
  * of this license document, but changing it is not allowed.
  */
-package com.gmantovi.harmony;
+package com.gmantovi.harmony.controllers;
 
 import com.gmantovi.harmony.API.MusicElement;
 import com.gmantovi.harmony.API.Proxy;

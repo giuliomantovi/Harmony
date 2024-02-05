@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="387.0" prefWidth="523.0" style="-fx-background-color: #242325;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gmantovi.harmony.PlaylistController">
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="387.0" prefWidth="523.0" style="-fx-background-color: #242325;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gmantovi.harmony.controllers.PlaylistController">
    <children>
       <TableView fx:id="playlistTableView" layoutX="26.0" layoutY="60.0" prefHeight="263.0" prefWidth="226.0" style="-fx-background-color: #242325;" stylesheets="@styles/TableView.css" AnchorPane.bottomAnchor="63.80000000000001" AnchorPane.leftAnchor="26.0" AnchorPane.topAnchor="60.0">
         <columns>
