@@ -8,6 +8,8 @@
  */
 package com.gmantovi.harmony;
 
+import com.gmantovi.harmony.API.MusicElement;
+import com.gmantovi.harmony.API.Proxy;
 import com.gmantovi.harmony.config.Constants;
 import com.gmantovi.harmony.config.Methods;
 import com.gmantovi.harmony.gsonClasses.album.Album;
@@ -35,15 +37,15 @@ import java.util.concurrent.Executors;
 public class PlaylistController {
 
     @FXML private Button addButton;
-    @FXML private TableColumn<Element, String> playlistIDColumn;
-    @FXML private TableColumn<Element, String> playlistSingerColumn;
-    @FXML private TableColumn<Element, String> playlistSongColumn;
-    @FXML private TableView<Element> playlistTableView;
+    @FXML private TableColumn<MusicElement, String> playlistIDColumn;
+    @FXML private TableColumn<MusicElement, String> playlistSingerColumn;
+    @FXML private TableColumn<MusicElement, String> playlistSongColumn;
+    @FXML private TableView<MusicElement> playlistTableView;
     @FXML private Button removeButton;
-    @FXML private TableColumn<Element, String> suggestedIDColumn;
-    @FXML private TableColumn<Element, String> suggestedSingerColumn;
-    @FXML private TableColumn<Element, String> suggestedSongColumn;
-    @FXML private TableView<Element> suggestedTableView;
+    @FXML private TableColumn<MusicElement, String> suggestedIDColumn;
+    @FXML private TableColumn<MusicElement, String> suggestedSingerColumn;
+    @FXML private TableColumn<MusicElement, String> suggestedSongColumn;
+    @FXML private TableView<MusicElement> suggestedTableView;
 
     @FXML
     public void initialize() throws SQLException {
@@ -96,8 +98,8 @@ public class PlaylistController {
      * @throws SQLException if connection to the mysql database fails
      * @return an observable list of Elements containing the playlist tracks
      */
-    private ObservableList<Element> getPlaylistData() throws SQLException {
-        ObservableList<Element> playlist =FXCollections.observableArrayList();
+    private ObservableList<MusicElement> getPlaylistData() throws SQLException {
+        ObservableList<MusicElement> playlist =FXCollections.observableArrayList();
         Connection connection = null;
         Statement statement = null;
         try{
@@ -108,7 +110,7 @@ public class PlaylistController {
                 int id = rs.getInt("IDsong");
                 String song = rs.getString("song");
                 String singer= rs.getString("singer");
-                playlist.add(new Element(id,song,"track,",singer));
+                playlist.add(new MusicElement(id,song,"track,",singer));
             }
         } catch(SQLException e) {
             e.printStackTrace();
@@ -129,9 +131,9 @@ public class PlaylistController {
     /**
      * Returns the index of the selected song in the TableView component
      * @param tableView is the TableView to get the index from
-     * @return an integer that defines one Element of the tableview
+     * @return an integer that defines one MusicElement of the tableview
      */
-    int selectedIndex(TableView<Element> tableView) {
+    int selectedIndex(TableView<MusicElement> tableView) {
         int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
         if (selectedIndex < 0) {
             showNoSongSelectedAlert();
@@ -172,18 +174,18 @@ public class PlaylistController {
 
     /**
      * searches for track suggestions by finding attributes in common with songs in the playlist
-     * @return an Observable List of Element containing the suggested tracks
+     * @return an Observable List of MusicElement containing the suggested tracks
      * @throws SQLException if connection to mysql database fails
      */
-    private ObservableList<Element> getSuggestedData() throws SQLException {
+    private ObservableList<MusicElement> getSuggestedData() throws SQLException {
 
         if (playlistTableView.getItems().isEmpty()) return null;
         //final list to return
-        ObservableList<Element> suggested =FXCollections.observableArrayList();
+        ObservableList<MusicElement> suggested =FXCollections.observableArrayList();
         Connection connection = null;
         Statement statement = null;
         try{
-            MusixMatchAPI musixMatchAPI = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
+            Proxy proxy = new Proxy(Constants.PERSONAL_API_KEY);
             connection = DriverManager.getConnection(Constants.MYSQL_CONNECTION_URL);
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery("SELECT IDsong FROM playlist");
@@ -195,7 +197,7 @@ public class PlaylistController {
 
             while(rs.next()) {
                 int id = rs.getInt("IDsong");
-                Track track = musixMatchAPI.getTrack(id);
+                Track track = proxy.getTrack(id);
                 //counting genres occurences of the playlist
                 List<MusicGenreList> genre = track.getTrack().getPrimaryGenres().getMusicGenreList();
                 if(!genre.isEmpty()){
@@ -216,7 +218,7 @@ public class PlaylistController {
                     }
                 }
                 //counting countries occurences of the playlist
-                String country = musixMatchAPI.getArtist(track.getTrack().getArtistId()).getArtist().getArtistCountry();
+                String country = proxy.getArtist(track.getTrack().getArtistId()).getArtist().getArtistCountry();
                 if(country != null && !country.equals("")){
                     if(countriesOccurrences.containsKey(country)){
                         countriesOccurrences.put(country, countriesOccurrences.get(country) + 1);
@@ -250,7 +252,7 @@ public class PlaylistController {
             List<Track> suggestedTracks = new ArrayList<>();
             //adding at most 3 suggested tracks selecting them from the top 50 songs from the most frequent country on the playlist
             if(topCountry != null){
-                List<Track> topTracks = musixMatchAPI.getTracksChart(topCountry,50,"top");
+                List<Track> topTracks = proxy.getTracksChart(topCountry,50,"top");
                 for(Track t: topTracks){
                     List<MusicGenreList> genresList = t.getTrack().getPrimaryGenres().getMusicGenreList();
                     if(!genresList.isEmpty()&&genresList.get(0).getMusicGenre().getMusicGenreName().equals(topGenre)){
@@ -264,23 +266,23 @@ public class PlaylistController {
             }
             //adding one song of the most frequent artist in the playlist, selecting the most popular song of a random album
             if(topArtist != null) {
-                List<Album> albumsList = musixMatchAPI.getArtistAlbums(topArtist, 20);
+                List<Album> albumsList = proxy.getArtistAlbums(topArtist, 20);
                 if (!albumsList.isEmpty()) {
                     int min = 0;
                     int max = albumsList.size() - 1;
                     int random_int = (int) Math.floor(Math.random() * (max - min + 1) + min);
                     Album randomAlbum = albumsList.get(random_int);
-                    List<Track> albumTracks = musixMatchAPI.getAlbumTracks(randomAlbum.getAlbum().getAlbumId(), 50);
+                    List<Track> albumTracks = proxy.getAlbumTracks(randomAlbum.getAlbum().getAlbumId(), 50);
                     Track bestTrack = Collections.max(albumTracks, Comparator.comparingInt(o -> o.getTrack().getTrackRating()));
                     suggestedTracks.add(bestTrack);
                 }
 
                 //adding song from most popular albums of 2 artists related to the most frequent artist in the playlist
-                List<Artist> relatedArtists = musixMatchAPI.getArtistsList("", 2, "", Methods.ARTIST_RELATED_GET, topArtist);
+                List<Artist> relatedArtists = proxy.getArtistsList("", 2, "", Methods.ARTIST_RELATED_GET, topArtist);
                 List<Album> relatedAlbums = new ArrayList<>();
                 //adds 1 random album for each of the 2 related artists to the list
                 for (Artist artist : relatedArtists) {
-                    List<Album> artistAlbums = musixMatchAPI.getArtistAlbums(artist.getArtist().getArtistId(), 50);
+                    List<Album> artistAlbums = proxy.getArtistAlbums(artist.getArtist().getArtistId(), 50);
                     if (!artistAlbums.isEmpty()) {
                         int min = 0;
                         int max = artistAlbums.size() - 1;
@@ -290,7 +292,7 @@ public class PlaylistController {
                 }
                 //gets a random track for each of the album and adds them to the suggested tracks
                 for (Album album : relatedAlbums) {
-                    List<Track> albumTracks = musixMatchAPI.getAlbumTracks(album.getAlbum().getAlbumId(), 30);
+                    List<Track> albumTracks = proxy.getAlbumTracks(album.getAlbum().getAlbumId(), 30);
                     if (!albumTracks.isEmpty()) {
                         int min = 0;
                         int max = albumTracks.size() - 1;
@@ -299,12 +301,12 @@ public class PlaylistController {
                     }
                 }
             }
-            //populates the observable list of elements, converting Track instances into Element and assuring there are no duplicates
+            //populates the observable list of elements, converting Track instances into MusicElement and assuring there are no duplicates
             for(Track t : suggestedTracks){
-                Element element = new Element(t.getTrack().getTrackId(),t.getTrack().getTrackName(),"track",t.getTrack().getArtistName());
-                //.contains() here refers to overriden equals method in Element class to assure the same Element ID can't appear twice between the tables
-                if(!suggested.contains(element)&&!playlistTableView.getItems().contains(element)) {
-                    suggested.add(element);
+                MusicElement musicElement = new MusicElement(t.getTrack().getTrackId(),t.getTrack().getTrackName(),"track",t.getTrack().getArtistName());
+                //.contains() here refers to overriden equals method in MusicElement class to assure the same MusicElement ID can't appear twice between the tables
+                if(!suggested.contains(musicElement)&&!playlistTableView.getItems().contains(musicElement)) {
+                    suggested.add(musicElement);
                 }
             }
         } catch(Exception e) {

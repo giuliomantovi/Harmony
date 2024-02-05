@@ -8,6 +8,8 @@
  */
 package com.gmantovi.harmony;
 
+import com.gmantovi.harmony.API.MusicElement;
+import com.gmantovi.harmony.API.Proxy;
 import com.gmantovi.harmony.config.Constants;
 import com.gmantovi.harmony.config.Methods;
 import com.gmantovi.harmony.gsonClasses.album.Album;
@@ -34,9 +36,9 @@ import java.util.List;
 public class SearchController {
     @FXML private ListView<String> listView;
     @FXML private TextField searchField;
-    @FXML private TableView<Element> tableView;
-    @FXML private TableColumn<Element, String> nameColumn;
-    @FXML private TableColumn<Element, String> typeColumn;
+    @FXML private TableView<MusicElement> tableView;
+    @FXML private TableColumn<MusicElement, String> nameColumn;
+    @FXML private TableColumn<MusicElement, String> typeColumn;
     @FXML private ComboBox<String> infoBox;
 
     @FXML
@@ -50,13 +52,13 @@ public class SearchController {
 
     /**
      * Populates the features combobox, differentiating track and artist features
-     * @param element Element instance of the search tableview selected, could be an artist or a track
+     * @param musicElement MusicElement instance of the search tableview selected, could be an artist or a track
      */
-    public void showOptions(Element element){
-        if(element==null) {
+    public void showOptions(MusicElement musicElement){
+        if(musicElement ==null) {
             return;
         }
-        if(element.getType().equals("track")){
+        if(musicElement.getType().equals("track")){
             infoBox.setItems(FXCollections.observableArrayList(
                     "General track info","Get lyrics","Get snippet","Get album songs","Add to playlist"));
         }else{
@@ -74,7 +76,7 @@ public class SearchController {
         if(infoBox.getSelectionModel().getSelectedItem()!=null) {
             try {
                 listView.setStyle("-fx-border-width: 1px");
-                MusixMatchAPI musixMatchAPI = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
+                Proxy proxy = new Proxy(Constants.PERSONAL_API_KEY);
                 ObservableList<String> info = null;
                 Integer ID = tableView.getSelectionModel().getSelectedItem().getId();
                 String song = tableView.getSelectionModel().getSelectedItem().getName();
@@ -82,7 +84,7 @@ public class SearchController {
                 switch (infoBox.getSelectionModel().getSelectedItem()) {
                     //displays in the listview the general information about a track
                     case "General track info" -> {
-                        Track track = musixMatchAPI.getTrack(ID);
+                        Track track = proxy.getTrack(ID);
                         String genres = "Primary genres: ";
                         List<MusicGenreList> genresList = track.getTrack().getPrimaryGenres().getMusicGenreList();
                         //concatenates the list of genres in a single string
@@ -106,7 +108,7 @@ public class SearchController {
                     }
                     //displays in the listview the general information about an artist
                     case "General artist info" -> {
-                        Artist artist = musixMatchAPI.getArtist(ID);
+                        Artist artist = proxy.getArtist(ID);
                         String alias = "Alias: ";
                         //concatenates list of aliases
                         if (!artist.getArtist().getAliasList().isEmpty()) {
@@ -132,14 +134,14 @@ public class SearchController {
                     }
                     //Displays the lyrics of a track in the listview
                     case "Get lyrics" -> {
-                        Lyrics lyrics = musixMatchAPI.getLyrics(ID);
+                        Lyrics lyrics = proxy.getLyrics(ID);
                         info = FXCollections.observableArrayList((List.of(
                                 "LYRICS:",
                                 lyrics.getLyricsBody())));
                     }
                     //Displays the snippet of a track in the listview
                     case "Get snippet" -> {
-                        Snippet snippet = musixMatchAPI.getSnippet(ID);
+                        Snippet snippet = proxy.getSnippet(ID);
                         info = FXCollections.observableArrayList((List.of(
                                 "Language: " + snippet.getSnippetLanguage(),
                                 "Snippet: \n" + snippet.getSnippetBody()))
@@ -147,7 +149,7 @@ public class SearchController {
                     }
                     //Displays in the listview at most 50 songs that are in the same album of the song selected
                     case "Get album songs" -> {
-                        List<Track> tracks = musixMatchAPI.getAlbumTracks(musixMatchAPI.getTrack(ID).getTrack().getAlbumId(), 50);
+                        List<Track> tracks = proxy.getAlbumTracks(proxy.getTrack(ID).getTrack().getAlbumId(), 50);
                         String tracksList = "SONGS LIST: \n";
                         for (Track t : tracks) {
                             tracksList = tracksList.concat(t.getTrack().getTrackName() + ", \n");
@@ -161,7 +163,7 @@ public class SearchController {
                     }
                     //Displays in the listview the last 200 albums of the artist selected
                     case "Get discography" -> {
-                        List<Album> albums = musixMatchAPI.getArtistAlbums(ID, 200);
+                        List<Album> albums = proxy.getArtistAlbums(ID, 200);
                         String albumsList = "ALBUMS LIST: \n";
                         for (Album a : albums) {
                             albumsList = albumsList.concat(a.getAlbum().getAlbumName() + ", \n");
@@ -174,7 +176,7 @@ public class SearchController {
                     }
                     //Displays in the listview 10 artists related to the selected one
                     case "Get related artists" ->{
-                        List<Artist> artists = musixMatchAPI.getArtistsList("",10,"", Methods.ARTIST_RELATED_GET,ID);
+                        List<Artist> artists = proxy.getArtistsList("",10,"", Methods.ARTIST_RELATED_GET,ID);
                         String relatedArtistsList = "RELATED ARTISTS: \n";
                         for (Artist a : artists) {
                             relatedArtistsList = relatedArtistsList.concat(a.getArtist().getArtistName() + ", \n");
@@ -242,35 +244,35 @@ public class SearchController {
      */
     @FXML
     public void onSearchButtonClicked(){
-        ObservableList<Element> elements = FXCollections.observableArrayList();
+        ObservableList<MusicElement> musicElements = FXCollections.observableArrayList();
         infoBox.setItems(null);
         try {
-            MusixMatchAPI musixMatchAPI = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
+            Proxy proxy = new Proxy(Constants.PERSONAL_API_KEY);
             if(searchField.getText().contains("-")){
                 //splits track name and artist name and looks for matches
                 String[] params = searchField.getText().split("-");
                 if((!params[0].isEmpty())&&(!params[1].isEmpty())){
-                    Track track = musixMatchAPI.getMatchingTrack(params[0],params[1]);
+                    Track track = proxy.getMatchingTrack(params[0],params[1]);
                     if(track !=null){
-                        elements.add(new Element(track.getTrack().getTrackId(), track.getTrack().getTrackName(),"track", track.getTrack().getArtistName()));
+                        musicElements.add(new MusicElement(track.getTrack().getTrackId(), track.getTrack().getTrackName(),"track", track.getTrack().getArtistName()));
                     }
                 }
             }else{
                 //displays at most 10 artists that matches the research
-                List<Artist> artists = musixMatchAPI.searchArtists(searchField.getText(),10);
+                List<Artist> artists = proxy.searchArtists(searchField.getText(),10);
                 if(!artists.isEmpty()){
-                    elements.add(new Element(artists.get(0).getArtist().getArtistId(),artists.get(0).getArtist().getArtistName(),"artist"));
+                    musicElements.add(new MusicElement(artists.get(0).getArtist().getArtistId(),artists.get(0).getArtist().getArtistName(),"artist"));
                     for(Artist a : artists){
                         //check to insert the same artist name only once because the api call may return the same artist many times for different albums or collaborations.
                         if(!a.getArtist().getArtistName().equals(artists.get(0).getArtist().getArtistName())){
-                            elements.add(new Element(a.getArtist().getArtistId(),a.getArtist().getArtistName(),"artist"));
+                            musicElements.add(new MusicElement(a.getArtist().getArtistId(),a.getArtist().getArtistName(),"artist"));
                         }
                     }
                 }
             }
-            if((!elements.isEmpty())&&(!searchField.getText().equals(""))){
+            if((!musicElements.isEmpty())&&(!searchField.getText().equals(""))){
                 tableView.setStyle("-fx-border-color: white");
-                tableView.setItems(elements);
+                tableView.setItems(musicElements);
             }else{
                 tableView.setItems(null);
                 listView.setItems(null);

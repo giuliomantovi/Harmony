@@ -44,6 +44,7 @@ public class MenuController {
      */
     @FXML
     public void switchToSearch() throws IOException {
+
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("search.fxml")));
         borderPane.setCenter(root);
     }

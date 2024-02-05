@@ -29,11 +29,11 @@ public class HarmonyApplication extends Application{
 
     @Override
     public void start(Stage stage) throws Exception {
-        BorderPane b = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("menu.fxml")));
+        BorderPane borderPane = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("menu.fxml")));
         //Sets Home section as default
-        AnchorPane a = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("home.fxml")));
-        b.setCenter(a);
-        Scene scene = new Scene(b);
+        AnchorPane anchorPane = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("home.fxml")));
+        borderPane.setCenter(anchorPane);
+        Scene scene = new Scene(borderPane);
         stage.setTitle("Harmony");
         stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("icons/harmony_icon.png"))));
         stage.setScene(scene);

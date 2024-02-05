@@ -7,11 +7,9 @@
 * of this license document, but changing it is not allowed.
 */
 
-package com.gmantovi.harmony;
+package com.gmantovi.harmony.API;
 
-import com.gmantovi.harmony.config.Constants;
-import com.gmantovi.harmony.config.Methods;
-import com.gmantovi.harmony.config.StatusCode;
+import com.gmantovi.harmony.config.*;
 import com.gmantovi.harmony.gsonClasses.album.Album;
 import com.gmantovi.harmony.gsonClasses.artist.Artist;
 import com.gmantovi.harmony.gsonClasses.artist.ArtistData;
@@ -40,19 +38,19 @@ import java.util.NoSuchElementException;
  * @author Giulio Mantovi
  * @version 2023.05.21
  */
-public class MusixMatchAPI {
+public class Proxy implements MusixMatchAPI{
     /**
      * A musiXmatch API Key.
      */
     private final String apiKey;
 
     /**
-     * MusixMatchAPI Constructor with API-Key.
+     * Proxy Constructor with API-Key.
      *
      * @param apiKey
      *            A musiXmatch API Key.
      */
-    public MusixMatchAPI(String apiKey) {
+    public Proxy(String apiKey) {
         this.apiKey = apiKey;
     }
 
@@ -72,7 +70,7 @@ public class MusixMatchAPI {
         params.put(Constants.TRACK_ID, "" + trackID);
 
         String response;
-        response = MusixMatchRequest.sendRequest(MusixMatchRequest.getURLString(
+        response = SendRequest.sendRequest(URLStringBuilder.getURLString(
                 Methods.TRACK_LYRICS_GET, params));
 
         try {
@@ -143,7 +141,7 @@ public class MusixMatchAPI {
         params.put(Constants.PAGE_SIZE, page_size);
 
         String response;
-        response = MusixMatchRequest.sendRequest(MusixMatchRequest.getURLString(
+        response = SendRequest.sendRequest(URLStringBuilder.getURLString(
                 Methods.ARTIST_SEARCH, params));
 
         try {
@@ -199,7 +197,7 @@ public class MusixMatchAPI {
             methodParam = Methods.ARTIST_RELATED_GET;
         }
         String response;
-        response = MusixMatchRequest.sendRequest(MusixMatchRequest.getURLString(
+        response = SendRequest.sendRequest(URLStringBuilder.getURLString(
                 methodParam, params));
 
         try {
@@ -238,7 +236,7 @@ public class MusixMatchAPI {
         params.put(Constants.S_RELEASE_DATE, "desc");
 
         String response;
-        response = MusixMatchRequest.sendRequest(MusixMatchRequest.getURLString(
+        response = SendRequest.sendRequest(URLStringBuilder.getURLString(
                 Methods.ARTIST_ALBUMS_GET, params));
 
         try {
@@ -283,7 +281,7 @@ public class MusixMatchAPI {
         params.put(Constants.CHART_NAME, chart_name);
 
         String response;
-        response = MusixMatchRequest.sendRequest(MusixMatchRequest.getURLString(
+        response = SendRequest.sendRequest(URLStringBuilder.getURLString(
                 Methods.CHART_TRACKS_GET, params));
 
         try {
@@ -322,7 +320,7 @@ public class MusixMatchAPI {
         params.put(Constants.PAGE_SIZE, page_size);
 
         String response;
-        response = MusixMatchRequest.sendRequest(MusixMatchRequest.getURLString(
+        response = SendRequest.sendRequest(URLStringBuilder.getURLString(
                 Methods.ALBUM_TRACKS_GET, params));
 
         try {
@@ -359,7 +357,7 @@ public class MusixMatchAPI {
         params.put(Constants.TRACK_ID, "" + trackID);
 
         String response;
-        response = MusixMatchRequest.sendRequest(MusixMatchRequest.getURLString(
+        response = SendRequest.sendRequest(URLStringBuilder.getURLString(
                 Methods.TRACK_SNIPPET_GET, params));
 
         try {
@@ -413,7 +411,7 @@ public class MusixMatchAPI {
         String response;
         TrackGetMessage message;
 
-        response = MusixMatchRequest.sendRequest(MusixMatchRequest.getURLString(
+        response = SendRequest.sendRequest(URLStringBuilder.getURLString(
                 methodName, params));
 
         try {
@@ -446,7 +444,7 @@ public class MusixMatchAPI {
         String response;
         ArtistGetMessage message;
 
-        response = MusixMatchRequest.sendRequest(MusixMatchRequest.getURLString(
+        response = SendRequest.sendRequest(URLStringBuilder.getURLString(
                 Methods.ARTIST_GET, params));
 
         try {
@@ -514,7 +512,7 @@ public class MusixMatchAPI {
         String response = null;
         AlbumGetMessage message = null;
 
-        response = MusixMatchRequest.sendRequest(MusixMatchRequest.getURLString(
+        response = SendRequest.sendRequest(SendRequest.getURLString(
                 methodName, params));
 
         try {

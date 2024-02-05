@@ -8,31 +8,26 @@
  */
 package com.gmantovi.harmony;
 
-import com.gmantovi.harmony.MusixMatchAPI;
+import com.gmantovi.harmony.API.Proxy;
 import com.gmantovi.harmony.config.Constants;
 import com.gmantovi.harmony.gsonClasses.lyrics.Lyrics;
 import com.gmantovi.harmony.gsonClasses.track.Track;
 import com.gmantovi.harmony.gsonClasses.track.TrackData;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.List;
 /**
  * Test class for checking the integrity of the API calls
  * @author Giulio Mantovi
  * @version 2023.05.21
  */
-public class MusixMatchAPITest {
+public class ProxyTest {
 
     @Test
     //@Ignore
     public void testAPI() throws Exception{
 
-        MusixMatchAPI musixMatch = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
+        Proxy musixMatch = new Proxy(Constants.PERSONAL_API_KEY);
 
         String trackName = "Don't stop the Party";
         String artistName = "The Black Eyed Peas";
@@ -64,52 +59,52 @@ public class MusixMatchAPITest {
         }
         /*
         Chiamata per il TESTO di una TRACK DATO ID
-        MusixMatchAPI m = new MusixMatchAPI("391689594f1ad1d992b2efd5fc5862ef");
+        Proxy m = new Proxy("391689594f1ad1d992b2efd5fc5862ef");
         Lyrics l = m.getLyrics(88236109);
         System.out.println(l.getLyricsBody());
 
         chiamata PER INFO TRACK DATO ID
-        MusixMatchAPI m = new MusixMatchAPI("391689594f1ad1d992b2efd5fc5862ef");
+        Proxy m = new Proxy("391689594f1ad1d992b2efd5fc5862ef");
         Track l = m.getTrack(88236109);
         System.out.println("NOME CANZONE = " + l.getTrack().getTrackName() + " NOME ALBUM = " + l.getTrack().getAlbumName());
 
          chiamata PER MATCHARE CANZONE CON Titolo, artista, album
-         MusixMatchAPI m = new MusixMatchAPI("391689594f1ad1d992b2efd5fc5862ef");
+         Proxy m = new Proxy("391689594f1ad1d992b2efd5fc5862ef");
          Track l = m.getMatchingTrack("Mistake","NF");
          System.out.println("NOME CANZONE = " + l.getTrack().getTrackName() + "\nNOME ALBUM = " + l.getTrack().getAlbumName() + "\nNome Cantante = " + l.getTrack().getArtistName());
 
          chiamata PER SNIPPET TRACK DATO ID
-         MusixMatchAPI m = new MusixMatchAPI("391689594f1ad1d992b2efd5fc5862ef");
+         Proxy m = new Proxy("391689594f1ad1d992b2efd5fc5862ef");
          Snippet l = m.getSnippet(m.getMatchingTrack("Mistake","NF").getTrack().getTrackId());
          System.out.println("SNIPPET CANZONE = " + l.getSnippetBody());
 
          chiamata per ALBUM DATO ID
-         MusixMatchAPI m = new MusixMatchAPI("391689594f1ad1d992b2efd5fc5862ef");
+         Proxy m = new Proxy("391689594f1ad1d992b2efd5fc5862ef");
          Album l = m.getAlbum(14250417);
          System.out.println("NOME ALBUM = " + l.getAlbum().getAlbumName() + " NOME ARTISTA = " + l.getAlbum().getArtistName());
 
          chiamata per LISTA ARTISTI DATO NOME
-        MusixMatchAPI m = new MusixMatchAPI("391689594f1ad1d992b2efd5fc5862ef");
+        Proxy m = new Proxy("391689594f1ad1d992b2efd5fc5862ef");
         List<Artist> l = m.searchArtists("Shawn Mendes",1);
         System.out.println("NOME Artista = " + l.get(0).getArtist().getArtistName() + "\nID ARTISTA = " + l.get(0).getArtist().getArtistId());
 
         chiamata per TOP CANZONI DI NAZIONE
-        MusixMatchAPI m = new MusixMatchAPI("391689594f1ad1d992b2efd5fc5862ef");
+        Proxy m = new Proxy("391689594f1ad1d992b2efd5fc5862ef");
         List<Track> l = m.getChartTracks("it",2,"top");
         System.out.println("NOME CANZONE 1 = " + l.get(0).getTrack().getTrackName() + "\nNOME CANZONE 2 = " + l.get(1).getTrack().getTrackName());
 
         chiamata per avere lista album di un artista
-        MusixMatchAPI m = new MusixMatchAPI("391689594f1ad1d992b2efd5fc5862ef");
+        Proxy m = new Proxy("391689594f1ad1d992b2efd5fc5862ef");
         List<Album> l = m.getArtistAlbums(27846837,5);
         System.out.println("NOME ALBUM = " + l.get(0).getAlbum().getAlbumName());
 
         chiamata per avere lista canzoni di album
-        MusixMatchAPI m = new MusixMatchAPI("391689594f1ad1d992b2efd5fc5862ef");
+        Proxy m = new Proxy("391689594f1ad1d992b2efd5fc5862ef");
         List<Track> l = m.getAlbumTracks(54605501,5);
         System.out.println("LISTA CANZONI = " + l.get(0).getTrack().getTrackName() );
 
         try {
-            MusixMatchAPI m = new MusixMatchAPI("391689594f1ad1d992b2efd5fc5862ef");
+            Proxy m = new Proxy("391689594f1ad1d992b2efd5fc5862ef");
             List<Track> l = m.getTracksChart("it",5,"top");
             System.out.println("NOME CANZONE 1 = " + l.get(0).getTrack().getTrackName() + "\nNOME CANZONE 2 = " + l.get(1).getTrack().getTrackName());
         }catch (NullPointerException e){

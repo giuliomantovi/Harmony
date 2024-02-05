@@ -12,7 +12,7 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * Objects of this class represent a lyric snippet from the
- * MusixMatchAPI API. Code based on existing jMusixMatch classes.
+ * Proxy API. Code based on existing jMusixMatch classes.
  * @author Sachin handiekar
  * @version 1.0
  */

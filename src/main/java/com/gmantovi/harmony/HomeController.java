@@ -8,6 +8,7 @@
  */
 package com.gmantovi.harmony;
 
+import com.gmantovi.harmony.API.Proxy;
 import com.gmantovi.harmony.config.Constants;
 import com.gmantovi.harmony.config.Methods;
 import com.gmantovi.harmony.gsonClasses.artist.Artist;
@@ -67,9 +68,9 @@ public class HomeController {
         labelTitle.setText("Top 10 artists in");
         listView.setStyle("-fx-border-width: 1px");
         try {
-            MusixMatchAPI musixMatchAPI = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
+            Proxy proxy = new Proxy(Constants.PERSONAL_API_KEY);
             //use selected country value of the combobox to make the API call
-            List<Artist> artistsList = musixMatchAPI.getArtistsList(countryBox.getSelectionModel().getSelectedItem(),10,"top", Methods.CHART_ARTISTS_GET,-1);
+            List<Artist> artistsList = proxy.getArtistsList(countryBox.getSelectionModel().getSelectedItem(),10,"top", Methods.CHART_ARTISTS_GET,-1);
             //list of artists' names
             List<String> namesList = artistsList.stream()
                     .map(artist -> artist.getArtist().getArtistName())
@@ -91,9 +92,9 @@ public class HomeController {
         labelTitle.setText("Top 10 songs in");
         listView.setStyle("-fx-border-width: 2px");
         try {
-            MusixMatchAPI musixMatchAPI = new MusixMatchAPI(Constants.PERSONAL_API_KEY);
+            Proxy proxy = new Proxy(Constants.PERSONAL_API_KEY);
             //use selected country value of the combobox to make the API call
-            List<Track> tracksList = musixMatchAPI.getTracksChart(countryBox.getSelectionModel().getSelectedItem(),10,"top");
+            List<Track> tracksList = proxy.getTracksChart(countryBox.getSelectionModel().getSelectedItem(),10,"top");
             //list of tracks names concatenated with the singers names
             List<String> namesList = tracksList.stream()
                     .map(t -> t.getTrack().getTrackName() + " - " + t.getTrack().getArtistName())
