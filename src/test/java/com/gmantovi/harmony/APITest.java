@@ -21,7 +21,7 @@ import java.util.List;
  * @author Giulio Mantovi
  * @version 2023.05.21
  */
-public class ProxyTest {
+public class APITest {
 
     @Test
     //@Ignore
