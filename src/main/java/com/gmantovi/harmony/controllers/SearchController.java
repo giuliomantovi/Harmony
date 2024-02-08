@@ -8,7 +8,7 @@
  */
 package com.gmantovi.harmony.controllers;
 
-import com.gmantovi.harmony.API.MusicElement;
+import com.gmantovi.harmony.MusicElement;
 import com.gmantovi.harmony.API.Proxy;
 import com.gmantovi.harmony.config.Constants;
 import com.gmantovi.harmony.config.Methods;

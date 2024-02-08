@@ -24,16 +24,13 @@ import java.util.List;
 public class APITest {
 
     @Test
-    //@Ignore
     public void testAPI() throws Exception{
-
-        Proxy musixMatch = new Proxy(Constants.PERSONAL_API_KEY);
+        Proxy proxy = new Proxy(Constants.PERSONAL_API_KEY);
 
         String trackName = "Don't stop the Party";
         String artistName = "The Black Eyed Peas";
-
         // Track Search [ Fuzzy ]
-        Track track = musixMatch.getMatchingTrack(trackName, artistName);
+        Track track = proxy.getMatchingTrack(trackName, artistName);
         TrackData data = track.getTrack();
         assert data != null;
         System.out.println("AlbumID : " + data.getAlbumId());
@@ -44,7 +41,7 @@ public class APITest {
 
         int trackID = data.getTrackId();
 
-        Lyrics lyrics = musixMatch.getLyrics(trackID);
+        Lyrics lyrics = proxy.getLyrics(trackID);
         assert lyrics != null;
         System.out.println("Lyrics ID       : " + lyrics.getLyricsId());
         System.out.println("Lyrics Language : " + lyrics.getLyricsLang());
@@ -53,7 +50,7 @@ public class APITest {
         System.out.println("Pixel-Tracking-URL : " + lyrics.getPixelTrackingURL());
         System.out.println("Lyrics Copyright : " + lyrics.getLyricsCopyright());
 
-        List<Track> chartTracks = musixMatch.getTracksChart("it",10,"top");
+        List<Track> chartTracks = proxy.getTracksChart("it",10,"top");
         for(Track t : chartTracks){
             System.out.println("TRACK: " + t.getTrack().getTrackName());
         }
