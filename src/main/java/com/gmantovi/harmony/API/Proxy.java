@@ -65,7 +65,7 @@ public class Proxy implements MusixMatchAPI{
      * @param apiKey
      *            instace of class.
      */
-    public static Proxy getInstance(String apiKey){
+    public synchronized static Proxy getInstance(String apiKey){
         if(proxy==null){
             proxy=new Proxy(apiKey);
         }
