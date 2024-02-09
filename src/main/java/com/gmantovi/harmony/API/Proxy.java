@@ -45,15 +45,32 @@ public class Proxy implements MusixMatchAPI{
     private final String apiKey;
 
     /**
+     * A musiXmatch API Key.
+     */
+    private static Proxy proxy;
+
+    /**
      * Proxy Constructor with API-Key.
      *
      * @param apiKey
      *            A musiXmatch API Key.
      */
-    public Proxy(String apiKey) {
+    private Proxy(String apiKey) {
         this.apiKey = apiKey;
     }
 
+    /**
+     * Proxy method for singleton pattern.
+     *
+     * @param apiKey
+     *            instace of class.
+     */
+    public static Proxy getInstance(String apiKey){
+        if(proxy==null){
+            proxy=new Proxy(apiKey);
+        }
+        return proxy;
+    }
     /**
      * Get Lyrics for the specific trackID.
      *

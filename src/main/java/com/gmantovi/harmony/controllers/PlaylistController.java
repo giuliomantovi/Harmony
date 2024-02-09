@@ -185,7 +185,7 @@ public class PlaylistController implements Controller {
         Connection connection = null;
         Statement statement = null;
         try{
-            Proxy proxy = new Proxy(Constants.PERSONAL_API_KEY);
+            Proxy proxy = Proxy.getInstance(Constants.PERSONAL_API_KEY);
             connection = DriverManager.getConnection(Constants.MYSQL_CONNECTION_URL);
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery("SELECT IDsong FROM playlist");

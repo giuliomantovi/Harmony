@@ -25,7 +25,7 @@ public class APITest {
 
     @Test
     public void testAPI() throws Exception{
-        Proxy proxy = new Proxy(Constants.PERSONAL_API_KEY);
+        Proxy proxy = Proxy.getInstance(Constants.PERSONAL_API_KEY);
 
         String trackName = "Don't stop the Party";
         String artistName = "The Black Eyed Peas";

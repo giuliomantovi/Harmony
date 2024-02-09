@@ -68,7 +68,7 @@ public class HomeController implements Controller {
         labelTitle.setText("Top 10 artists in");
         listView.setStyle("-fx-border-width: 1px");
         try {
-            Proxy proxy = new Proxy(Constants.PERSONAL_API_KEY);
+            Proxy proxy = Proxy.getInstance(Constants.PERSONAL_API_KEY);
             //use selected country value of the combobox to make the API call
             List<Artist> artistsList = proxy.getArtistsList(countryBox.getSelectionModel().getSelectedItem(),10,"top", Methods.CHART_ARTISTS_GET,-1);
             //list of artists' names
@@ -92,7 +92,7 @@ public class HomeController implements Controller {
         labelTitle.setText("Top 10 songs in");
         listView.setStyle("-fx-border-width: 2px");
         try {
-            Proxy proxy = new Proxy(Constants.PERSONAL_API_KEY);
+            Proxy proxy = Proxy.getInstance(Constants.PERSONAL_API_KEY);
             //use selected country value of the combobox to make the API call
             List<Track> tracksList = proxy.getTracksChart(countryBox.getSelectionModel().getSelectedItem(),10,"top");
             //list of tracks names concatenated with the singers names

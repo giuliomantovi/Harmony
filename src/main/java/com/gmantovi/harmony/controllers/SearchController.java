@@ -76,7 +76,7 @@ public class SearchController implements Controller {
         if(infoBox.getSelectionModel().getSelectedItem()!=null) {
             try {
                 listView.setStyle("-fx-border-width: 1px");
-                Proxy proxy = new Proxy(Constants.PERSONAL_API_KEY);
+                Proxy proxy = Proxy.getInstance(Constants.PERSONAL_API_KEY);
                 ObservableList<String> info = null;
                 Integer ID = tableView.getSelectionModel().getSelectedItem().getId();
                 String song = tableView.getSelectionModel().getSelectedItem().getName();
@@ -247,7 +247,7 @@ public class SearchController implements Controller {
         ObservableList<MusicElement> musicElements = FXCollections.observableArrayList();
         infoBox.setItems(null);
         try {
-            Proxy proxy = new Proxy(Constants.PERSONAL_API_KEY);
+            Proxy proxy = Proxy.getInstance(Constants.PERSONAL_API_KEY);
             if(searchField.getText().contains("-")){
                 //splits track name and artist name and looks for matches
                 String[] params = searchField.getText().split("-");
